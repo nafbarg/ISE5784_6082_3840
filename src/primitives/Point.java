@@ -38,9 +38,8 @@ public class Point {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Point point)) return false;
-
-        return xyz.equals(point.xyz);
+        return (o instanceof Point point
+                && xyz.equals(point.xyz));
     }
 
     @Override

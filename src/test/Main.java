@@ -1,3 +1,5 @@
+package test;
+
 import static java.lang.System.out;
 
 import static primitives.Util.isZero;
@@ -11,7 +13,7 @@ import primitives.*;
 public final class Main {
 
    /**
-    * Main program to tests initial functionality of the 1st stage
+    * test.Main program to tests initial functionality of the 1st stage
     * @param args irrelevant here
     */
    public static void main(String[] args) {

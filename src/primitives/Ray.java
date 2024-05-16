@@ -22,9 +22,9 @@ public class Ray {
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Ray ray)) return false;
-
-        return head.equals(ray.head) && direction.equals(ray.direction);
+        return (o instanceof Ray ray
+                && head.equals(ray.head)
+                && direction.equals(ray.direction));
     }
 
     @Override
