@@ -1,6 +1,7 @@
 package primitives;
 
 import static primitives.Util.alignZero;
+import static primitives.Util.isZero;
 
 /**
  * This class represents a vector in 3D space.
@@ -17,9 +18,7 @@ public class Vector extends Point{
      * @throws IllegalArgumentException if the vector is (0,0,0)
      */
     public Vector(double x, double y, double z) {
-        super(x, y, z);
-        if (xyz.equals(Double3.ZERO))
-            throw new IllegalArgumentException("Vector(0,0,0) is not a valid vector");
+        this(new Double3(x, y, z));
     }
 
     /**
@@ -64,6 +63,8 @@ public class Vector extends Point{
      * @return the new vector
      */
     public Vector scale(double scalar) {
+        if (isZero(scalar))
+            throw new IllegalArgumentException("Cannot scale Vector by 0");
         return new Vector(xyz.scale(scalar));
     }
 
@@ -96,7 +97,7 @@ public class Vector extends Point{
         if (length == 0)
             throw new ArithmeticException("Cannot normalize Vector(0,0,0)");
 
-        return new Vector(xyz.scale(1 / length));
+        return new Vector(xyz.scale(1d / length));
     }
 
     /**
@@ -116,6 +117,9 @@ public class Vector extends Point{
      * @return the cross product
      */
     public Vector crossProduct(Vector vector) {
+        //check if the vectors are parallel
+        if (isZero(length() * vector.length()) || isZero(length() * vector.length() - dotProduct(vector)))
+            throw new IllegalArgumentException("Cannot cross product of parallel vectors");
         return new Vector(
                 xyz.d2 * vector.xyz.d3 - xyz.d3 * vector.xyz.d2,
                 xyz.d3 * vector.xyz.d1 - xyz.d1 * vector.xyz.d3,

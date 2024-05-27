@@ -5,7 +5,7 @@ package primitives;
  * It is defined by a starting point (head) and a direction.
  */
 public class Ray {
-    private final Double3 head;
+    private final Point head;
     private final Vector direction;
 
     /**
@@ -14,7 +14,7 @@ public class Ray {
      * @param head the starting point of the ray
      * @param direction the direction of the ray
      */
-    public Ray(Double3 head, Vector direction) {
+    public Ray(Point head, Vector direction) {
         this.head = head;
         this.direction = direction.normalize();
     }

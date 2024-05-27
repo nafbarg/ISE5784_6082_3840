@@ -10,7 +10,7 @@ import primitives.*;
  * Test program for the 1st stage
  * @author Dan Zilberstein
  */
-public final class Main {
+public final class   Main {
 
    /**
     * test.Main program to tests initial functionality of the 1st stage

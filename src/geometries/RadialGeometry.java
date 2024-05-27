@@ -7,6 +7,9 @@ import primitives.Vector;
  * A radial geometry is a geometry that is defined by its radius.
  */
 abstract public class RadialGeometry implements Geometry{
+    /**
+     * The radius of the radial geometry.
+     */
     protected final double radius;
 
     /**
