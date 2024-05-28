@@ -85,6 +85,7 @@ public class Point {
         return new Point(xyz.add(vector.xyz));
     }
 
+
     /**
      * Subtracts another point from this point, resulting in a vector.
      *
