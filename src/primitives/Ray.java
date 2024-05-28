@@ -38,7 +38,13 @@ public class Ray {
         return direction;
     }
 
-
+    public Point getPoint(double t) {
+        try {
+            return head.add(direction.scale(t));
+        } catch (Exception e) {
+            return head;
+        }
+    }
 
 
 
