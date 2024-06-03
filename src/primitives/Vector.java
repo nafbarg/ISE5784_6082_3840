@@ -125,4 +125,6 @@ public class Vector extends Point{
                 xyz.d3 * vector.xyz.d1 - xyz.d1 * vector.xyz.d3,
                 xyz.d1 * vector.xyz.d2 - xyz.d2 * vector.xyz.d1);
     }
+
+
 }

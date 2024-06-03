@@ -1,5 +1,7 @@
 package primitives;
 
+
+
 /**
  * This class represents a point in 3D space.
  * It provides methods to perform operations on these points.

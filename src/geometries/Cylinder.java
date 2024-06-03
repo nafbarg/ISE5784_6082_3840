@@ -1,6 +1,9 @@
 package geometries;
 
 import primitives.*;
+
+import java.util.List;
+
 import static primitives.Util.isZero;
 
 /**
@@ -48,6 +51,11 @@ public class Cylinder extends Tube{
         // If surface point is on the side of the cylinder, the superclass (Tube) is
         // used to find the normal
         return super.getNormal(p);
+    }
+
+    @Override
+    public List<Point> findIntersections(Ray ray) {
+        return super.findIntersections(ray);
     }
 
 }
