@@ -38,14 +38,17 @@ public class Ray {
         return direction;
     }
 
+    /**
+     * Calculates a point on the ray at a given distance from the origin.
+     *
+     * @param t the distance from the origin point, can be any real number
+     * @return the point on the ray at distance t from the origin
+     */
     public Point getPoint(double t) {
         if (isZero(t)) {
-            throw new IllegalArgumentException("scale zero is illegal");
-            return head.add(direction.scale(t));
-
-        } else {
             return head;
         }
+        return head.add(direction.scale(t));
     }
 
     @Override

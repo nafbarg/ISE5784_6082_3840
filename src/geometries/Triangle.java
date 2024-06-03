@@ -29,40 +29,36 @@ public class Triangle extends Polygon {
 
     @Override
     public List<Point> findIntersections(Ray ray) {
+        // First, check if the ray intersects the plane of the triangle
         if (plane.findIntersections(ray) == null)
             return null;
-        Point q = plane.findIntersections(ray).get(0);
-        // Then, use barycentric coordinates technique to check if the intersection
-        // point is inside the triangle
-        // calculate the area of the respective triangle for each of the edges
-        Point a = vertices.get(0);
-        Point b = vertices.get(1);
-        Point c = vertices.get(2);
 
-        Vector normal = plane.getNormal();
+        // If the ray intersects the plane, get the intersection point
+        Point p = plane.findIntersections(ray).getFirst();
 
-        try {
-            if (isZero(a.subtract(b).crossProduct(q.subtract(b)).dotProduct(normal))
-                    || isZero(c.subtract(b).crossProduct(q.subtract(b)).dotProduct(normal))
-                    || isZero(a.subtract(c).crossProduct(q.subtract(c)).dotProduct(normal)))
-                return null;
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
+        Point p0 = ray.getP0();
+        Vector v = ray.getDirection();
 
-        double area = a.subtract(b).crossProduct(a.subtract(c)).dotProduct(normal);
+        // Calculate the vectors from the head of the ray to each of the vertices
+        Vector v1 = vertices.get(0).subtract(p0);
+        Vector v2 = vertices.get(1).subtract(p0);
+        Vector v3 = vertices.get(2).subtract(p0);
 
-        double aArea = c.subtract(b).crossProduct(q.subtract(b)).dotProduct(normal);
-        double bArea = a.subtract(c).crossProduct(q.subtract(c)).dotProduct(normal);
-        double cArea = b.subtract(a).crossProduct(q.subtract(a)).dotProduct(normal);
+        // Calculate the normal vectors of the triangles of the pyramid
+        Vector n1 = v1.crossProduct(v2).normalize();
+        Vector n2 = v2.crossProduct(v3).normalize();
+        Vector n3 = v3.crossProduct(v1).normalize();
 
-        double aplha = aArea / area;
-        double betha = bArea / area;
-        double gamma = cArea / area;
+        // Calculate the dot product of the ray direction vector with the normal vectors
+        double s1 = alignZero(v.dotProduct(n1));
+        double s2 = alignZero(v.dotProduct(n2));
+        double s3 = alignZero(v.dotProduct(n3));
 
-        if (isZero(aplha + betha + gamma - 1) && alignZero(aplha) > 0 && alignZero(betha) > 0 && alignZero(gamma) > 0)
-            return List.of(q);
+        // Check if the intersection point is inside the triangle
+        if (s1 > 0 && s2 > 0 && s3 > 0 || s1 < 0 && s2 < 0 && s3 < 0)
+            return List.of(p);
 
+        // If the intersection point is not inside the triangle
         return null;
 
     }

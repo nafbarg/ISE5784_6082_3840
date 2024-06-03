@@ -31,7 +31,7 @@ class SphereTests {
 
     void testFindIntersections() {
 
-        Sphere sphere = new Sphere(p100, 1d);
+        Sphere sphere = new Sphere(1d, p100);
 
         final Point gp1 = new Point(0.0651530771650466, 0.355051025721682, 0);
         final Point gp2 = new Point(1.53484692283495, 0.844948974278318, 0);
@@ -52,9 +52,9 @@ class SphereTests {
         assertEquals(exp, result1, "Ray crosses sphere");
 
         // TC03: Ray starts inside the sphere (1 point)
-        ...
+
         // TC04: Ray starts after the sphere (0 points)
-            ...
+
 
         // =============== Boundary Values Tests ==================
 
@@ -73,6 +73,7 @@ class SphereTests {
         // TC20: Ray starts at the tangent point
         // TC21: Ray starts after the tangent point
         // **** Group: Special cases
-        // TC22: Ray's line is outside, ray is orthogonal to ray start to sphere's center line}
+        // TC22: Ray's line is outside, ray is orthogonal to ray start to sphere's center line
+        }
 
 }
