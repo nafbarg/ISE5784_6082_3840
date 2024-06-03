@@ -106,7 +106,7 @@ public class Polygon implements Geometry {
             return null;
 
         Point p0 = ray.getP0();
-        Vector v = ray.getDirection();
+        Vector v = ray.getDir();
         List<Vector> vectors = new LinkedList<>();
 
         for (Point p : this.vertices) {

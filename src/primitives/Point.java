@@ -37,6 +37,10 @@ public class Point {
         this.xyz = xyz;
     }
 
+    public double getX(){ return xyz.d1;}
+    public double getY(){ return xyz.d2;}
+    public double getZ(){ return xyz.d3;}
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -86,6 +90,7 @@ public class Point {
     public Point add(Vector vector) {
         return new Point(xyz.add(vector.xyz));
     }
+
 
 
     /**

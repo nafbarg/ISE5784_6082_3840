@@ -4,6 +4,8 @@ package geometries;
 import org.junit.jupiter.api.Test;
 import primitives.*;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -83,6 +85,41 @@ public class PolygonTests {
         for (int i = 0; i < 3; ++i)
             assertEquals(0d, result.dotProduct(pts[i].subtract(pts[i == 0 ? 3 : i - 1])), DELTA,
                     "Polygon's normal is not orthogonal to one of the edges");
+    }
+
+    @Test
+    public void testFindIntersections() {
+        Polygon polygon = new Polygon(new Point(0,0,1),
+                new Point(0,0,3),
+                new Point(0,1,4),
+                new Point(0,3,4),
+                new Point(0,4,3),
+                new Point(0,4,1),
+                new Point(0,3,0),
+                new Point(0,1,0));
+        // ============ Equivalence Partitions Tests ==============
+        // TC01: intersection inside the polygon
+        Point p0 = new Point(0,1,1);
+        List<Point> result = polygon.findIntersections(new Ray(new Point(1,1,1),
+                new Vector(-1,0,0)));
+        assertEquals(1,result.size(),"there are only 1 intersection");
+        assertEquals(List.of(p0),result, "oh no, it's not the point!!!");
+        //TC02: intersection outside and against edge
+        assertNull(polygon.findIntersections(new Ray(new Point(1,2,5),
+                new Vector(-1,0,0))),"the point is outside against edge...");
+        //TC03: intersection outside and against vertex
+        assertNull(polygon.findIntersections(new Ray(new Point(1,-0.5,0.5),
+                new Vector(-1,0,0))),"the point is outside against vertex...");
+        // =============== Boundary Values Tests ==================
+        //TC11: intersection on edge
+        assertNull(polygon.findIntersections(new Ray(new Point(1,0,2),
+                new Vector(-1,0,0))),"the point is on the edge...");
+        //TC12: intersection on vertex
+        assertNull(polygon.findIntersections(new Ray(new Point(1,0,1),
+                new Vector(-1,0,0))),"the point is on the vertex...");
+        //TC13: intersection on edge's continuation
+        assertNull(polygon.findIntersections(new Ray(new Point(1,5,0),
+                new Vector(-1,0,0))),"the point is on the edge's continuation...");
     }
 
 }

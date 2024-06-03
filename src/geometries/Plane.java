@@ -1,18 +1,22 @@
 package geometries;
 
-import primitives.Double3;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
 import java.util.List;
 
+import static primitives.Util.alignZero;
+import static primitives.Util.isZero;
+
 /**
  * Plane class represents a plane in 3D Cartesian coordinate system
  * by a point and a normal vector to the plane
  */
 public class Plane implements Geometry {
-    private final Point p;
+    /** The reference point of the plane. */
+    private final Point q0;
+    /** The normal vector of the plane. */
     private final Vector normal;
 
     /**
@@ -22,7 +26,7 @@ public class Plane implements Geometry {
      * @param normal the normal vector to the plane
      */
     public Plane(Point p, Vector normal) {
-        this.p = p;
+        this.q0 = p;
         this.normal = normal.normalize();
     }
 
@@ -34,7 +38,7 @@ public class Plane implements Geometry {
      * @param p3 the third point on the plane
      */
     public Plane(Point p1, Point p2, Point p3) {
-        p = p1;
+        q0 = p1;
 
         Vector v1 = p2.subtract(p1);
         Vector v2 = p3.subtract(p1);
@@ -59,13 +63,28 @@ public class Plane implements Geometry {
     @Override
     public String toString() {
         return "Plane{" +
-                "p=" + p +
+                "p=" + q0 +
                 ", normal=" + normal +
                 '}';
     }
 
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    public List<Point> findIntersections(Ray ray){
         return null;
-    }
+        public List<Point> findIntersections(Ray ray) {
+            Point p0 = ray.getP0();
+            Vector v = ray.getDir();
+            if (q0.equals(p0)) {
+                return null;
+            }
+            double nv = normal.dotProduct(v);
+            if (isZero(nv)) {
+                return null;
+            }
+            double t = (q0.subtract(p0)).dotProduct(normal) / nv;
+            if (alignZero(t) <= 0) {
+                return null;
+            }
+            return List.of(p0.add(v.scale(t)));
+        }
 }

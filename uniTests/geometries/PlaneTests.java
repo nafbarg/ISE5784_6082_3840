@@ -2,7 +2,10 @@ package geometries;
 
 import org.junit.jupiter.api.Test;
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,6 +44,40 @@ void testPlane() {
         assertTrue(matchesExpected1 || matchesExpected2, "Bad normal to plane");
     }
 
+    void testFindIntersections() {
+        Plane plane = new Plane(new Point(0, 0, 1), new Vector(0, 0, 1));
+
+        // ============ Equivalence Partitions Tests ==============
+        // TC01: Ray intersects the plane
+        Ray ray1 = new Ray(new Point(0, 0, 0), new Vector(0, 0, 1));
+        List<Point> result1 = plane.findIntersections(ray1);
+        assertNotNull(result1, "Ray intersects the plane");
+        assertEquals(1, result1.size(), "Wrong number of points");
+        assertEquals(new Point(0, 0, 1), result1.get(0), "Ray intersects the plane at (0,0,1)");
+
+        // TC02: Ray does not intersect the plane
+        Ray ray2 = new Ray(new Point(0, 0, 0), new Vector(0, 1, 0));
+        List<Point> result2 = plane.findIntersections(ray2);
+        assertNull(result2, "Ray does not intersect the plane");
+
+        // =============== Boundary Values Tests ==================
+        // TC11: Ray is parallel to the plane
+        Ray ray3 = new Ray(new Point(0, 0, 1), new Vector(1, 0, 0));
+        List<Point> result3 = plane.findIntersections(ray3);
+        assertNull(result3, "Ray is parallel to the plane");
+
+        // TC12: Ray is orthogonal to the plane and starts at the plane
+        Ray ray4 = new Ray(new Point(0, 0, 1), new Vector(0, 0, 1));
+        List<Point> result4 = plane.findIntersections(ray4);
+        assertNull(result4, "Ray is orthogonal to the plane and starts at the plane");
+
+        // TC13: Ray is orthogonal to the plane and starts below the plane
+        Ray ray5 = new Ray(new Point(0, 0, 0), new Vector(0, 0, 1));
+        List<Point> result5 = plane.findIntersections(ray5);
+        assertNotNull(result5, "Ray is orthogonal to the plane and starts below the plane");
+        assertEquals(1, result5.size(), "Wrong number of points");
+        assertEquals(new Point(0, 0, 1), result5.get(0), "Ray intersects the plane at (0,0,1)");
+    }
 
 
 }

@@ -34,7 +34,7 @@ public class Ray {
      *
      * @return directional vector of ray.
      */
-    public Vector getDirection() {
+    public Vector getDir() {
         return direction;
     }
 

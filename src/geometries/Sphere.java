@@ -1,6 +1,5 @@
 package geometries;
 
-import primitives.Double3;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
@@ -42,7 +41,7 @@ public class Sphere extends RadialGeometry{
     @Override
     public List<Point> findIntersections(Ray ray) {
         Vector u = center.subtract(ray.getP0());
-        double tm = alignZero(ray.getDirection().dotProduct(u));
+        double tm = alignZero(ray.getDir().dotProduct(u));
         double d = alignZero(Math.sqrt(u.lengthSquared() - tm * tm));
         if (d >= radius) {
             return List.of();

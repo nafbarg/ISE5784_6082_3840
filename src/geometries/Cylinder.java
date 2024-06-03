@@ -37,7 +37,7 @@ public class Cylinder extends Tube{
     public Vector getNormal(Point p) {
         // Check that surface point is different from head of axisRay to avoid creating
         // a zero vector
-        Vector dir = axis.getDirection();
+        Vector dir = axis.getDir();
         Point p0 = axis.getP0();
         if (p.equals(p0))
             return dir.scale(-1);
