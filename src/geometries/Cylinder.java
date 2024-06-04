@@ -53,9 +53,62 @@ public class Cylinder extends Tube{
         return super.getNormal(p);
     }
 
+    /**
+     * Finds the intersection points of a given ray with the cylinder.
+     *
+     * @param ray the ray to intersect with the cylinder
+     * @return a list of intersection points, or null if there are no intersections
+     */
     @Override
     public List<Point> findIntersections(Ray ray) {
-        return null;
+        // Find intersections with the infinite cylinder
+        List<Point> tubeIntersections = super.findIntersections(ray);
+        if (tubeIntersections == null) {
+            return null;
+        }
+
+        // Initialize variables to track the intersection parameters
+        double t1 = Double.POSITIVE_INFINITY;
+        double t2 = Double.NEGATIVE_INFINITY;
+
+        // Check if ray intersects the infinite cylinder
+        for (Point intersection : tubeIntersections) {
+            Vector v = intersection.subtract(axis.getP0());
+            double t = axis.getDir().dotProduct(v);
+
+            if (t1 > t) {
+                t1 = t;
+            }
+
+            if (t2 < t) {
+                t2 = t;
+            }
+        }
+
+        // Check if ray intersects the finite cylinder
+        double tMin = 0;
+        double tMax = height;
+
+        if (t1 > tMax || t2 < tMin) {
+            return null;
+        }
+
+        // Adjust intersection points to be within the height range
+        Point p1 = ray.getPoint(t1);
+        Point p2 = ray.getPoint(t2);
+
+        // Check if the intersection points are inside the finite cylinder
+        if (p1.getZ() >= tMin && p1.getZ() <= tMax) {
+            if (p2.getZ() >= tMin && p2.getZ() <= tMax) {
+                return List.of(p1, p2);
+            } else {
+                return List.of(p1);
+            }
+        } else if (p2.getZ() >= tMin && p2.getZ() <= tMax) {
+            return List.of(p2);
+        }
+
+        return null; // No valid intersections found
     }
 
 }
