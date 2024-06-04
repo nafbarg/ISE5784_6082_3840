@@ -1,5 +1,6 @@
 package geometries;
 
+import primitives.Ray;
 import primitives.Vector;
 
 /**
@@ -27,5 +28,6 @@ abstract public class RadialGeometry implements Geometry{
                 "radius=" + radius +
                 '}';
     }
+
 
 }

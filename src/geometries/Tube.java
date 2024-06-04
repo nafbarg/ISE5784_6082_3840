@@ -4,6 +4,8 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+import java.util.List;
+
 import static primitives.Util.alignZero;
 
 /**
@@ -47,8 +49,13 @@ public class Tube extends RadialGeometry {
             return p0_p.normalize();
         }
         // Point o is the point on the v axis that is closest to the point p
-        Point o = p0.add(v.scale(t));
+        Point o = axis.getPoint(t);
         // The normal vector at point p is the vector from point o to point p, normalized
         return p.subtract(o).normalize();
+    }
+
+    @Override
+    public List<Point> findIntersections(Ray ray) {
+        return null;
     }
 }

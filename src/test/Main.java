@@ -6,6 +6,10 @@ import static primitives.Util.isZero;
 
 import primitives.*;
 
+
+/* Naftali Bar-giora 208243840, Itamar Puzailov 305426082 */
+
+
 /**
  * Test program for the 1st stage
  * @author Dan Zilberstein

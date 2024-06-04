@@ -7,6 +7,7 @@ import primitives.Vector;
 import java.util.List;
 
 import static primitives.Util.alignZero;
+import static primitives.Util.isZero;
 
 /**
  * Triangle class represents a triangle in 3D Cartesian coordinate
@@ -33,10 +34,10 @@ public class Triangle extends Polygon {
             return null;
 
         // If the ray intersects the plane, get the intersection point
-        Point q = plane.findIntersections(ray).getFirst();
+        Point p = plane.findIntersections(ray).getFirst();
 
         Point p0 = ray.getP0();
-        Vector v = ray.getDir();
+        Vector v = ray.getDirection();
 
         // Calculate the vectors from the head of the ray to each of the vertices
         Vector v1 = vertices.get(0).subtract(p0);
@@ -55,7 +56,7 @@ public class Triangle extends Polygon {
 
         // Check if the intersection point is inside the triangle
         if (s1 > 0 && s2 > 0 && s3 > 0 || s1 < 0 && s2 < 0 && s3 < 0)
-            return List.of(q);
+            return List.of(p);
 
         // If the intersection point is not inside the triangle
         return null;
