@@ -123,3 +123,4 @@ class SphereTests {
         assertNull(sphere.findIntersections(new Ray(new Point(1, 2, 0), new Vector(0, 0, 1))),
                 "Ray's direction is out of sphere");
     }
+}
