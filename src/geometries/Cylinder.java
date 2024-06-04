@@ -37,7 +37,7 @@ public class Cylinder extends Tube{
     public Vector getNormal(Point p) {
         // Check that surface point is different from head of axisRay to avoid creating
         // a zero vector
-        Vector dir = axis.getDir();
+        Vector dir = axis.getDirection();
         Point p0 = axis.getP0();
         if (p.equals(p0))
             return dir.scale(-1);
@@ -74,7 +74,7 @@ public class Cylinder extends Tube{
         // Check if ray intersects the infinite cylinder
         for (Point intersection : tubeIntersections) {
             Vector v = intersection.subtract(axis.getP0());
-            double t = axis.getDir().dotProduct(v);
+            double t = axis.getDirection().dotProduct(v);
 
             if (t1 > t) {
                 t1 = t;

@@ -1,9 +1,6 @@
 package geometries;
 
-import primitives.Point;
-import primitives.Ray;
-import primitives.Vector;
-
+import primitives.*;
 import java.util.List;
 
 import static primitives.Util.alignZero;
@@ -38,7 +35,7 @@ public class Tube extends RadialGeometry {
     public Vector getNormal(Point p) {
         // Finding the offset of the nearest point to the given point that is on the axis ray
         Point p0 = axis.getP0(); // Get the origin point of the axis ray
-        Vector v = axis.getDir(); // Get the direction vector of the axis ray
+        Vector v = axis.getDirection(); // Get the direction vector of the axis ray
         // vector p0_p: The vector from the origin of the axis ray to the point p
         Vector p0_p = p.subtract(p0);
         // Calculate the projection of p0_p onto the direction vector v

@@ -33,7 +33,7 @@ class GeometriesTests {
                 "No intersections but result isn't null");
 
         // TC13: Single geometry is intersected
-        assertEquals(1, geometries.findIntersections(new Ray(new Point(5, 5, 5), new Vector(-1, 0, 0))).size(),
+        assertEquals(1, geometries.findIntersections(new Ray(new Point(5.5, 5, 5), new Vector(-1, 0, 0))).size(),
                 "Wrong number of points");
 
         // TC14: All geometries are intersected

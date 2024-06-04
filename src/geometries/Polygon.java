@@ -102,22 +102,27 @@ public class Polygon implements Geometry {
 
         List<Point> points = this.plane.findIntersections(ray);
 
+        // If the ray does not intersect the plane, return null
         if (points == null)
             return null;
 
         Point p0 = ray.getP0();
-        Vector v = ray.getDir();
+        Vector v = ray.getDirection();
         List<Vector> vectors = new LinkedList<>();
 
+        // Calculate the vectors from the head of the ray to each of the vertices
         for (Point p : this.vertices) {
             vectors.add(p.subtract(p0));
         }
-        int vSize = vectors.size();
 
+        int vSize = vectors.size();
         double normal = alignZero(vectors.get(vSize - 1).crossProduct(vectors.get(0)).dotProduct(v));
+        // If the intersection point is not on the plane of the polygon, return null
         if (isZero(normal))
             return null;
+
         boolean sign = normal > 0;
+        // Check if the intersection point is inside the polygon
         for (int i = 0; i < vSize - 1; i++) {
             normal = alignZero(vectors.get(i).crossProduct(vectors.get(i + 1)).dotProduct(v));
             if ((normal > 0) ^ sign || isZero(normal))

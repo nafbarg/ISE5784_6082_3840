@@ -14,15 +14,19 @@ import static primitives.Util.isZero;
  * by a point and a normal vector to the plane
  */
 public class Plane implements Geometry {
-    /** The reference point of the plane. */
+    /**
+     * The reference point of the plane.
+     */
     private final Point q0;
-    /** The normal vector of the plane. */
+    /**
+     * The normal vector of the plane.
+     */
     private final Vector normal;
 
     /**
      * Constructs a new plane with the specified point and normal vector.
      *
-     * @param p the point on the plane
+     * @param p      the point on the plane
      * @param normal the normal vector to the plane
      */
     public Plane(Point p, Vector normal) {
@@ -69,22 +73,26 @@ public class Plane implements Geometry {
     }
 
     @Override
-    public List<Point> findIntersections(Ray ray){
-        return null;
-        public List<Point> findIntersections(Ray ray) {
-            Point p0 = ray.getP0();
-            Vector v = ray.getDir();
-            if (q0.equals(p0)) {
-                return null;
-            }
-            double nv = normal.dotProduct(v);
-            if (isZero(nv)) {
-                return null;
-            }
-            double t = (q0.subtract(p0)).dotProduct(normal) / nv;
-            if (alignZero(t) <= 0) {
-                return null;
-            }
-            return List.of(p0.add(v.scale(t)));
+
+    public List<Point> findIntersections(Ray ray) {
+        Point p0 = ray.getP0();
+        Vector v = ray.getDirection();
+        // If the ray starts on the plane, return null
+        if (q0.equals(p0)) {
+            return null;
         }
+
+        double nv = normal.dotProduct(v);
+        // If the ray is parallel to the plane, return null
+        if (isZero(nv)) {
+            return null;
+        }
+
+        double t = (q0.subtract(p0)).dotProduct(normal) / nv;
+        // If the intersection point is behind the ray, return null
+        if (alignZero(t) <= 0) {
+            return null;
+        }
+        return List.of(p0.add(v.scale(t)));
+    }
 }

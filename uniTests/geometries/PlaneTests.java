@@ -44,19 +44,20 @@ void testPlane() {
         assertTrue(matchesExpected1 || matchesExpected2, "Bad normal to plane");
     }
 
+    @Test
     void testFindIntersections() {
         Plane plane = new Plane(new Point(0, 0, 1), new Vector(0, 0, 1));
 
         // ============ Equivalence Partitions Tests ==============
         // TC01: Ray intersects the plane
-        Ray ray1 = new Ray(new Point(0, 0, 0), new Vector(0, 0, 1));
+        Ray ray1 = new Ray(new Point(0.5, 0.5, 0), new Vector(-0.5, -0.5, 1));
         List<Point> result1 = plane.findIntersections(ray1);
         assertNotNull(result1, "Ray intersects the plane");
         assertEquals(1, result1.size(), "Wrong number of points");
-        assertEquals(new Point(0, 0, 1), result1.get(0), "Ray intersects the plane at (0,0,1)");
+        assertEquals(new Point(0, 0, 1), result1.getFirst(), "Ray intersects the plane at (0,0,1)");
 
         // TC02: Ray does not intersect the plane
-        Ray ray2 = new Ray(new Point(0, 0, 0), new Vector(0, 1, 0));
+        Ray ray2 = new Ray(new Point(0.5, 0.5, 0), new Vector(-0.5, -0.5, -1));
         List<Point> result2 = plane.findIntersections(ray2);
         assertNull(result2, "Ray does not intersect the plane");
 
@@ -72,11 +73,11 @@ void testPlane() {
         assertNull(result4, "Ray is orthogonal to the plane and starts at the plane");
 
         // TC13: Ray is orthogonal to the plane and starts below the plane
-        Ray ray5 = new Ray(new Point(0, 0, 0), new Vector(0, 0, 1));
+        Ray ray5 = new Ray(new Point(0, 1, 0), new Vector(0, 0, 1));
         List<Point> result5 = plane.findIntersections(ray5);
         assertNotNull(result5, "Ray is orthogonal to the plane and starts below the plane");
         assertEquals(1, result5.size(), "Wrong number of points");
-        assertEquals(new Point(0, 0, 1), result5.get(0), "Ray intersects the plane at (0,0,1)");
+        assertEquals(new Point(0, 1, 1), result5.getFirst(), "Ray intersects the plane at (0,0,1)");
     }
 
 

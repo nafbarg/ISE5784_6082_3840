@@ -40,8 +40,13 @@ public class Sphere extends RadialGeometry {
 
     @Override
     public List<Point> findIntersections(Ray ray) {
+        //If the ray starts at the center of the sphere
+        if (center.equals(ray.getP0())) {
+            return List.of(ray.getPoint(radius));
+        }
+
         Vector u = center.subtract(ray.getP0());
-        double tm = alignZero(ray.getDir().dotProduct(u));
+        double tm = alignZero(ray.getDirection().dotProduct(u));
         double d = alignZero(Math.sqrt(u.lengthSquared() - tm * tm));
 
         // If the ray starts outside the sphere and there is no intersection

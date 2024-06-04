@@ -1,13 +1,9 @@
 package geometries;
 
-import primitives.Point;
-import primitives.Ray;
-import primitives.Vector;
-
+import primitives.*;
 import java.util.List;
 
 import static primitives.Util.alignZero;
-import static primitives.Util.isZero;
 
 /**
  * Triangle class represents a triangle in 3D Cartesian coordinate
@@ -60,6 +56,5 @@ public class Triangle extends Polygon {
 
         // If the intersection point is not inside the triangle
         return null;
-
     }
 }

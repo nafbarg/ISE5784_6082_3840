@@ -22,11 +22,13 @@ class RayTests {
         // ============ Equivalence Partitions Tests ==============
         // TC01: Test getPoint() with positive distance
         Point resultPositive = ray.getPoint(5);
-        assertEquals(new Point(6, 2, 3), resultPositive, "getPoint() for positive distance is incorrect");
+        Point expected = ray.getP0().add(ray.getDirection().scale(5));
+        assertEquals(expected, resultPositive, "getPoint() for positive distance is incorrect");
 
         // TC02: Test getPoint() with negative distance
         Point resultNegative = ray.getPoint(-5);
-        assertEquals(new Point(-4, 2, 3), resultNegative, "getPoint() for negative distance is incorrect");
+        expected = ray.getP0().add(ray.getDirection().scale(-5));
+        assertEquals(expected, resultNegative, "getPoint() for negative distance is incorrect");
 
         // =============== Boundary Values Tests ==================
         // TC03: Test getPoint() with zero distance
