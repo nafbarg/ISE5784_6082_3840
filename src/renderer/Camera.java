@@ -4,6 +4,8 @@ import primitives.*;
 
 import java.util.MissingResourceException;
 
+import static primitives.Util.isZero;
+
 /**
  * Camera class represents a camera in 3D Cartesian coordinate system
  * by a point and 3 vectors to the camera
@@ -135,9 +137,28 @@ public class Camera implements Cloneable{
      * @param i the y coordinate of the pixel
      * @return the constructed ray
      */
-    public Ray constructRay(int nX, int nY, int j, int i){
-        return null;
+    public Ray constructRay(int nX, int nY, int j, int i) {
+        // pixel measurements
+        double rY = height / nY;
+        double rX = width / nX;
+
+        // place pixel[i,j] in view grid center
+        Point pIJ = p0.add(vTo.scale(distance));
+
+        // calculate pixel[i,j] center
+        double yI = -(i - ((nY - 1) / 2d)) * rY;
+        double xJ = (j - ((nX - 1) / 2d)) * rX;
+
+        // shift to center of pixel[i,j]
+        if (!isZero(xJ))
+            pIJ = pIJ.add(vRight.scale(xJ));
+        if (!isZero(yI))
+            pIJ = pIJ.add(vUp.scale(yI));
+
+        // return ray from camera to viewPlane coordinate (i, j)
+        return new Ray(p0, pIJ.subtract(p0));
     }
+
 
     /**
      * Gets the camera's position.
