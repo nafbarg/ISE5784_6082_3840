@@ -52,27 +52,28 @@ public class IntegrationTests {
         assertEquals(2, intersections, "Wrong number of intersections with the sphere");
 
         // TC02: Camera is looking at the sphere from the side
-        sphere = new Sphere(2.5, new Point(0, 0, -2.5));
-
-        intersections = countIntersections(camera, sphere);
-        assertEquals(18, intersections, "Wrong number of intersections with the sphere");
-
-
-        // TC03: Camera is looking at the sphere from the side
-        camera = Camera.getBuilder()
+        Camera camera1 = Camera.getBuilder()
                 .setLocation(new Point(0, 0, 0.5))
                 .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
                 .setVpSize(3, 3)
                 .setVpDistance(1)
                 .build();
 
+        sphere = new Sphere(2.5, new Point(0, 0, -2.5));
+
+        intersections = countIntersections(camera1, sphere);
+        assertEquals(18, intersections, "Wrong number of intersections with the sphere");
+
+
+        // TC03: Camera is looking at the sphere from the side
+
         sphere = new Sphere(2, new Point(0, 0, -2));
 
-        intersections = countIntersections(camera, sphere);
+        intersections = countIntersections(camera1, sphere);
         assertEquals(10, intersections, "Wrong number of intersections with the sphere");
 
         // TC04: Camera is inside the sphere
-        camera = Camera.getBuilder()
+        Camera camera2 = Camera.getBuilder()
                 .setLocation(new Point(0, 0, -0.5))
                 .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
                 .setVpSize(3, 3)
@@ -81,7 +82,7 @@ public class IntegrationTests {
 
         sphere = new Sphere(5, new Point(0, 0, -1));
 
-        intersections = countIntersections(camera, sphere);
+        intersections = countIntersections(camera2, sphere);
         assertEquals(9, intersections, "Wrong number of intersections with the sphere");
 
         // TC05: Camera isn't looking at the sphere
@@ -102,7 +103,7 @@ public class IntegrationTests {
         assertEquals(9, intersections, "Wrong number of intersections with the plane");
 
         // TC02: The plane with a slight slope to the view plane
-        plane = new Plane(new Point(0, 0, -4), new Vector(1, 1, -1));
+        plane = new Plane(new Point(0, 0, -10), new Vector(0, 1, 2));
 
         intersections = countIntersections(camera, plane);
         assertEquals(9, intersections, "Wrong number of intersections with the plane");

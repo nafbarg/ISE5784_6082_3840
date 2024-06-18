@@ -100,7 +100,7 @@ public class Camera implements Cloneable{
             if (camera.p0 == null) {
                 throw new MissingResourceException(MISSING_RESOURCE_ERROR, CAMERA_CLASS, "location");
             }
-            if (camera.vTo == null || camera.vUp == null || camera.vRight == null) {
+            if (camera.vTo == null || camera.vUp == null) {
                 throw new MissingResourceException(MISSING_RESOURCE_ERROR, CAMERA_CLASS, "direction vectors");
             }
             if (camera.width == 0 || camera.height == 0) {
