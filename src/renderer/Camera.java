@@ -18,8 +18,29 @@ public class Camera implements Cloneable{
     private double height = 0.0;
     private double width = 0.0;
     private double distance = 0.0;
+    private RayTracerBase rayTracer;
+    private ImageWriter imagerWriter;
 
     private Camera() {
+    }
+
+    public Camera renderImage() {
+        if (rayTracer == null) {
+            throw new MissingResourceException("Missing rendering resource", "Camera", "rayTracer");
+        }
+        if (imagerWriter == null) {
+            throw new MissingResourceException("Missing rendering resource", "Camera", "imageWriter");
+        }
+        rayTracer.renderImage(imagerWriter);
+        return this;
+    }
+
+    public Camera printGrid(int i, Color color) {
+        return  this;
+    }
+
+    public Camera writeToImage() {
+        return this;
     }
 
     public static class Builder{
@@ -114,7 +135,22 @@ public class Camera implements Cloneable{
             camera.vRight = camera.vTo.crossProduct(camera.vUp).normalize();
 
             // Return a clone of the camera
-            return (Camera) camera.clone();
+            try {
+                return (Camera) camera.clone();
+            } catch (CloneNotSupportedException ignore) {
+                return null;
+            }
+
+        }
+
+        public Builder setRayTracer(SimpleRayTracer rayTracer) {
+            camera.rayTracer = rayTracer;
+            return this;
+        }
+
+         public Builder setImageWriter(ImageWriter imageWriter) {
+            camera.imagerWriter = imageWriter;
+            return this;
         }
     }
 
@@ -223,12 +259,5 @@ public class Camera implements Cloneable{
         return distance;
     }
 
-    @Override
-    public Camera clone() {
-        try {
-            return (Camera) super.clone();
-        } catch (CloneNotSupportedException e) {
-            return null;
-        }
-    }
+
 }
