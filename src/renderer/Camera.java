@@ -31,15 +31,26 @@ public class Camera implements Cloneable{
         if (imagerWriter == null) {
             throw new MissingResourceException("Missing rendering resource", "Camera", "imageWriter");
         }
-        rayTracer.renderImage(imagerWriter);
+
+        // todo implement
         return this;
     }
 
-    public Camera printGrid(int i, Color color) {
+    public Camera printGrid(int intervall, Color color) {
+        int nX = imagerWriter.getNx();
+        int nY = imagerWriter.getNy();
+        for (int i = 0; i < nY; i++) {
+            for (int j = 0; j < nX; j++) {
+                if (i % intervall == 0 || j % intervall == 0) {
+                    imagerWriter.writePixel(j, i, color);
+                }
+            }
+        }
         return  this;
     }
 
     public Camera writeToImage() {
+        imagerWriter.writeToImage();
         return this;
     }
 
@@ -152,6 +163,7 @@ public class Camera implements Cloneable{
             camera.imagerWriter = imageWriter;
             return this;
         }
+
     }
 
 
