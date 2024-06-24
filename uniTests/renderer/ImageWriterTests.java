@@ -9,12 +9,14 @@ import primitives.Color;
 import org.junit.jupiter.api.Test;
 
 /**
- * ImageWriter class unit tests
+ * ImageWriterTests class is responsible for testing the ImageWriter class.
+ * It checks the functionality of writing pixels and creating an image.
  */
 public class ImageWriterTests {
 
     /**
-     * Produce a yellow image with a red interval grid
+     * Test method for creating a simple grid image.
+     * The image is yellow with a red interval grid.
      */
     @Test
     public void simpleGridTest() {
@@ -30,9 +32,9 @@ public class ImageWriterTests {
 
         for (int i = 0; i < nY; ++i) {
             for (int j = 0; j < nX; ++j) {
-                if (i % interval == 0 || j % interval == 0)
+                if (i % interval == 0 || j % interval == 0)// grid lines
                     imageWriter.writePixel(j, i, colorRed);
-                else
+                else// the rest of the image
                     imageWriter.writePixel(j, i, colorYellow);
             }
         }
