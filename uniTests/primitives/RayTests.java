@@ -2,6 +2,9 @@ package primitives;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -34,5 +37,34 @@ class RayTests {
         // TC03: Test getPoint() with zero distance
         Point resultZero = ray.getPoint(0);
         assertEquals(p0, resultZero, "getPoint() for zero distance is incorrect");
+    }
+
+    /**
+     * Test method for {@link primitives.Ray#findClosestPoint(java.util.List)}.
+     */
+    @Test
+    public void testFindClosestPoint() {
+        Ray ray = new Ray(new Point(0, 0, 0), new Vector(1, 0, 0));
+
+        // ============ Equivalence Partitions Tests ==============
+        // The middle point in the list is the closest
+        Point p1 = new Point(1, 1, 1);
+        Point p2 = new Point(0.5, 0.5, 0.5);
+        Point p3 = new Point(2, 2, 2);
+        List<Point> points = Arrays.asList(p1, p2, p3);
+        assertEquals(p2, ray.findClosestPoint(points), "Middle point should be the closest");
+
+        // =============== Boundary Values Tests ==================
+        // TC01: Empty list
+        points = Arrays.asList();
+        assertNull(ray.findClosestPoint(points), "Empty list should return null");
+
+        // TC02: The first point is the closest
+        points = Arrays.asList(p1, p3);
+        assertEquals(p1, ray.findClosestPoint(points), "First point should be the closest");
+
+        // TC03: The last point is the closest
+        points = Arrays.asList(p3, p1);
+        assertEquals(p1, ray.findClosestPoint(points), "Last point should be the closest");
     }
 }
