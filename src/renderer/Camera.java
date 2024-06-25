@@ -24,24 +24,34 @@ public class Camera implements Cloneable{
     private Camera() {
     }
 
-    public Camera renderImage() {
-        if (rayTracer == null) {
-            throw new MissingResourceException("Missing rendering resource", "Camera", "rayTracer");
-        }
-        if (imagerWriter == null) {
-            throw new MissingResourceException("Missing rendering resource", "Camera", "imageWriter");
-        }
-
-        // todo implement
-        return this;
-    }
-
-    public Camera printGrid(int intervall, Color color) {
+    /**
+     * Renders the image.
+     */
+    public Camera renderImage(){
         int nX = imagerWriter.getNx();
         int nY = imagerWriter.getNy();
         for (int i = 0; i < nY; i++) {
             for (int j = 0; j < nX; j++) {
-                if (i % intervall == 0 || j % intervall == 0) {
+                castRay(nX, nY, j, i);
+            }
+        }
+
+        return this;
+    }
+
+    /**
+     * Prints a grid on the image.
+     *
+     * @param interval the interval between the grid lines
+     * @param color the color of the grid lines
+     * @return the Camera object
+     */
+    public Camera printGrid(int interval, Color color) {
+        int nX = imagerWriter.getNx();
+        int nY = imagerWriter.getNy();
+        for (int i = 0; i < nY; i++) {
+            for (int j = 0; j < nX; j++) {
+                if (i % interval == 0 || j % interval == 0) {
                     imagerWriter.writePixel(j, i, color);
                 }
             }
@@ -49,9 +59,28 @@ public class Camera implements Cloneable{
         return  this;
     }
 
+    /**
+     * Writes the image to a file.
+     *
+     * @return the Camera object
+     */
     public Camera writeToImage() {
         imagerWriter.writeToImage();
         return this;
+    }
+
+    /**
+     * Casts a ray through the specified pixel, computes the color of the ray, and writes the color to the pixel.
+     *
+     * @param nX number of pixels in the x direction
+     * @param nY number of pixels in the y direction
+     * @param j  x coordinate of the pixel
+     * @param i  y coordinate of the pixel
+     */
+    private void castRay(int nX, int nY, int j, int i) {
+        Ray ray = constructRay(nX, nY, j, i);
+        Color color = rayTracer.traceRay(ray);
+        imagerWriter.writePixel(j, i, color);
     }
 
     public static class Builder{
@@ -122,6 +151,28 @@ public class Camera implements Cloneable{
         }
 
         /**
+         * Sets the camera's ray tracer.
+         *
+         * @param rayTracer the ray tracer of the camera
+         * @return the Builder
+         */
+        public Builder setRayTracer(SimpleRayTracer rayTracer) {
+            camera.rayTracer = rayTracer;
+            return this;
+        }
+
+        /**
+         * Sets the camera's image writer.
+         *
+         * @param imageWriter the image writer of the camera
+         * @return the Builder
+         */
+        public Builder setImageWriter(ImageWriter imageWriter) {
+            camera.imagerWriter = imageWriter;
+            return this;
+        }
+
+        /**
          * Builds the Camera object.
          *
          * @return the Camera object
@@ -141,6 +192,12 @@ public class Camera implements Cloneable{
             if (camera.distance == 0) {
                 throw new MissingResourceException(MISSING_RESOURCE_ERROR, CAMERA_CLASS, "distance");
             }
+            if (camera.rayTracer == null) {
+                throw new MissingResourceException(MISSING_RESOURCE_ERROR, CAMERA_CLASS, "rayTracer");
+            }
+            if (camera.imagerWriter == null) {
+                throw new MissingResourceException(MISSING_RESOURCE_ERROR, CAMERA_CLASS, "imageWriter");
+            }
 
             // Calculate the missing data
             camera.vRight = camera.vTo.crossProduct(camera.vUp).normalize();
@@ -154,15 +211,7 @@ public class Camera implements Cloneable{
 
         }
 
-        public Builder setRayTracer(SimpleRayTracer rayTracer) {
-            camera.rayTracer = rayTracer;
-            return this;
-        }
 
-         public Builder setImageWriter(ImageWriter imageWriter) {
-            camera.imagerWriter = imageWriter;
-            return this;
-        }
 
     }
 
