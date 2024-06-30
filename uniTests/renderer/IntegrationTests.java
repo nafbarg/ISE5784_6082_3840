@@ -2,6 +2,8 @@ package renderer;
 import geometries .*;
 import org.junit.jupiter.api.Test;
 import primitives .*;
+import scene.Scene;
+
 import static org.junit.jupiter.api.Assertions .*;
 
 /**
@@ -38,6 +40,8 @@ public class IntegrationTests {
             .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
             .setVpSize(3, 3)
             .setVpDistance(1)
+            .setRayTracer(new SimpleRayTracer(new Scene("Test scene")))
+            .setImageWriter(new ImageWriter("base render test", 1000, 1000))
             .build();
 
     /**
@@ -57,6 +61,8 @@ public class IntegrationTests {
                 .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
                 .setVpSize(3, 3)
                 .setVpDistance(1)
+                .setRayTracer(new SimpleRayTracer(new Scene("Test scene")))
+                .setImageWriter(new ImageWriter("base render test", 1000, 1000))
                 .build();
 
         sphere = new Sphere(2.5, new Point(0, 0, -2.5));
@@ -78,6 +84,8 @@ public class IntegrationTests {
                 .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
                 .setVpSize(3, 3)
                 .setVpDistance(1)
+                .setRayTracer(new SimpleRayTracer(new Scene("Test scene")))
+                .setImageWriter(new ImageWriter("base render test", 1000, 1000))
                 .build();
 
         sphere = new Sphere(5, new Point(0, 0, -1));

@@ -7,7 +7,7 @@ import primitives.Vector;
  * RadialGeometry is an abstract class that represents a radial geometry in 3D space.
  * A radial geometry is a geometry that is defined by its radius.
  */
-abstract public class RadialGeometry implements Geometry{
+abstract public class RadialGeometry extends Geometry{
     /**
      * The radius of the radial geometry.
      */

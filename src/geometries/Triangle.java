@@ -24,7 +24,7 @@ public class Triangle extends Polygon {
     }
 
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
         // First, check if the ray intersects the plane of the triangle
         if (plane.findIntersections(ray) == null)
             return null;
@@ -52,7 +52,7 @@ public class Triangle extends Polygon {
 
         // Check if the intersection point is inside the triangle
         if (s1 > 0 && s2 > 0 && s3 > 0 || s1 < 0 && s2 < 0 && s3 < 0)
-            return List.of(p);
+            return List.of(new GeoPoint(this, p));
 
         // If the intersection point is not inside the triangle
         return null;

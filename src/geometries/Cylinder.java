@@ -60,9 +60,11 @@ public class Cylinder extends Tube{
      * @return a list of intersection points, or null if there are no intersections
      */
     @Override
-    public List<Point> findIntersections(Ray ray) {
-        // Find intersections with the infinite cylinder
-        List<Point> tubeIntersections = super.findIntersections(ray);
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray){
+
+
+        // Find geoPoints intersections with the infinite cylinder
+        List<GeoPoint> tubeIntersections = super.findGeoIntersectionsHelper(ray);
         if (tubeIntersections == null) {
             return null;
         }
@@ -72,8 +74,8 @@ public class Cylinder extends Tube{
         double t2 = Double.NEGATIVE_INFINITY;
 
         // Check if ray intersects the infinite cylinder
-        for (Point intersection : tubeIntersections) {
-            Vector v = intersection.subtract(axis.getP0());
+        for (GeoPoint intersection : tubeIntersections) {
+            Vector v = intersection.point.subtract(axis.getP0());
             double t = axis.getDirection().dotProduct(v);
 
             if (t1 > t) {
@@ -100,12 +102,12 @@ public class Cylinder extends Tube{
         // Check if the intersection points are inside the finite cylinder
         if (p1.getZ() >= tMin && p1.getZ() <= tMax) {
             if (p2.getZ() >= tMin && p2.getZ() <= tMax) {
-                return List.of(p1, p2);
+                return List.of(new GeoPoint(this, p1), new GeoPoint(this, p2));
             } else {
-                return List.of(p1);
+                return List.of(new GeoPoint(this, p1));
             }
         } else if (p2.getZ() >= tMin && p2.getZ() <= tMax) {
-            return List.of(p2);
+            return List.of(new GeoPoint(this, p2));
         }
 
         return null; // No valid intersections found

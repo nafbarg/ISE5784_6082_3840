@@ -13,7 +13,7 @@ import static primitives.Util.isZero;
  * Plane class represents a plane in 3D Cartesian coordinate system
  * by a point and a normal vector to the plane
  */
-public class Plane implements Geometry {
+public class Plane extends Geometry {
     /**
      * The reference point of the plane.
      */
@@ -74,7 +74,7 @@ public class Plane implements Geometry {
 
     @Override
 
-    public List<Point> findIntersections(Ray ray) {
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
         Point p0 = ray.getP0();
         Vector v = ray.getDirection();
         // If the ray starts on the plane, return null
@@ -93,6 +93,7 @@ public class Plane implements Geometry {
         if (alignZero(t) <= 0) {
             return null;
         }
-        return List.of(p0.add(v.scale(t)));
+
+        return List.of(new GeoPoint(this, p0.add(v.scale(t))));
     }
 }
