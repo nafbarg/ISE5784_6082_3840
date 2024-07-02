@@ -30,7 +30,17 @@ public class Scene {
     /**
      * lights of the scene. default is empty
      */
-    public List<LightSource> lights = new LinkedList<LightSource>();
+    public List<LightSource> lights = new LinkedList<>();
+
+    /**
+     * Sets the lights of the scene.
+     * @param lights the lights to set
+     * @return the scene with the set lights
+     */
+    public Scene setLights(List<LightSource> lights) {
+        this.lights = lights;
+        return this;
+    }
 
     /**
      * Constructs a Scene with a specific name.
