@@ -2,7 +2,11 @@ package scene;
 
 import geometries.Geometries;
 import lighting.AmbientLight;
+import lighting.LightSource;
 import primitives.Color;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Scene class represents a 3D scene with geometries and ambient light.
@@ -22,6 +26,11 @@ public class Scene {
      * The background color of the scene.
      */
     public Color background = Color.BLACK;
+
+    /**
+     * lights of the scene. default is empty
+     */
+    public List<LightSource> lights = new LinkedList<LightSource>();
 
     /**
      * Constructs a Scene with a specific name.
