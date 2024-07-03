@@ -189,6 +189,25 @@ public class LightsTests {
               .writeToImage();
    }
 
+   @Test
+   public void trianglesMultipleLights() {
+      // Define multiple light sources for the triangles
+      scene2.geometries.add(triangle1, triangle2);
+
+      // Define different light sources with varied positions, directions, and colors
+      scene2.lights.add(new DirectionalLight(new Color(400, 300, 100), new Vector(-1, -1, -1)));
+      scene2.lights.add(new PointLight(new Color(300, 500, 700), new Point(-30, 20, -40))
+              .setKl(0.001).setKq(0.0005));
+      scene2.lights.add(new SpotLight(new Color(700, 200, 200), new Point(5, -50, -20), new Vector(-1, 5, -0.5))
+              .setKl(0.001).setKq(0.0002));
+
+      // Setup camera and render the image
+      camera2.setImageWriter(new ImageWriter("lightTrianglesMultipleLights", 500, 500))
+              .build()
+              .renderImage()
+              .writeToImage();
+   }
+
 
 //   /** Produce a picture of a sphere lighted by a narrow spotlight */
 //   @Test
