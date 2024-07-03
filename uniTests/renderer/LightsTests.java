@@ -1,4 +1,4 @@
-package unittests.renderer;
+package renderer;
 
 import static java.awt.Color.*;
 
@@ -25,13 +25,13 @@ public class LightsTests {
    private final Camera.Builder camera1                 = Camera.getBuilder()
            .setRayTracer(new SimpleRayTracer(scene1))
            .setLocation(new Point(0, 0, 1000))
-           .setDirection(new Vector(0, 0, -1), Vector.Y) /*change from Point.ZERO to new Vector(0, 0, -1)*/
+           .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0)) /*change from Point.ZERO to new Vector(0, 0, -1)*/
            .setVpSize(150, 150).setVpDistance(1000);
    /** Second camera builder for some of tests */
    private final Camera.Builder camera2                 = Camera.getBuilder()
            .setRayTracer(new SimpleRayTracer(scene2))
            .setLocation(new Point(0, 0, 1000))
-           .setDirection(new Vector(0, 0, -1), Vector.Y) /*change from Point.ZERO to new Vector(0, 0, -1)*/
+           .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0)) /*change from Point.ZERO to new Vector(0, 0, -1)*/
            .setVpSize(200, 200).setVpDistance(1000);
 
    /** Shininess value for most of the geometries in the tests */
@@ -166,6 +166,29 @@ public class LightsTests {
               .renderImage()
               .writeToImage();
    }
+
+   /**
+    * Produce a picture of a sphere lighted by multiple light sources
+    */
+   @Test
+   public void sphereMultipleLights() {
+      // Define multiple light sources for the sphere
+      scene1.geometries.add(sphere);
+
+      // Define different light sources with varied positions, directions, and colors
+      scene1.lights.add(new DirectionalLight(new Color(400, 300, 100), new Vector(-1, -1, -1)));
+      scene1.lights.add(new PointLight(new Color(300, 500, 700), new Point(-30, 20, -40))
+              .setKl(0.001).setKq(0.0005));
+      scene1.lights.add(new SpotLight(new Color(700, 200, 200), new Point(20, -50, -20), new Vector(-1, 1, -0.5))
+              .setKl(0.001).setKq(0.0002));
+
+      // Setup camera and render the image
+      camera1.setImageWriter(new ImageWriter("lightSphereMultipleLights", 500, 500))
+              .build()
+              .renderImage()
+              .writeToImage();
+   }
+
 
 //   /** Produce a picture of a sphere lighted by a narrow spotlight */
 //   @Test
