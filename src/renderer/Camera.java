@@ -212,7 +212,9 @@ public class Camera implements Cloneable{
         }
 
 
-
+        public Builder setDirection(Point zero, Vector y) {
+            return this;
+        }
     }
 
 

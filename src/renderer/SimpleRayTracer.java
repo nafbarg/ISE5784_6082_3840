@@ -13,12 +13,40 @@ import static primitives.Util.alignZero;
 public class SimpleRayTracer extends RayTracerBase {
 
     /**
+     * The delta value used to prevent self-shadowing.
+     */
+    private static final double DELTA = 0.1;
+
+    /**
      * Constructs a SimpleRayTracer with the given scene.
      *
      * @param scene the scene to be rendered by this ray tracer
      */
     public SimpleRayTracer(scene.Scene scene) {
         super(scene);
+    }
+
+    /**
+     * Checks if the point is shaded by another geometry.
+     *
+     * @param gp the intersection point
+     * @param l the light direction vector
+     * @param n the normal vector at the intersection point
+     * @return true if the point is not shaded by another geometry, false otherwise
+     */
+    private boolean unshaded(GeoPoint gp, Vector l, Vector n, LightSource light) {
+        Vector lightDirection = l.scale(-1); // from point to light source
+        Vector delta = n.scale(n.dotProduct(lightDirection) > 0 ? DELTA : -DELTA);
+        Point point = gp.point.add(delta);
+        Ray shadowRay = new Ray(point, lightDirection);
+        var intersections = scene.geometries.findGeoIntersections(shadowRay);
+        if (intersections == null) return true;
+        double lightDistance = light.getDistance(gp.point);
+        for (GeoPoint geoPoint : intersections) {
+            if (alignZero(geoPoint.point.distance(gp.point) - lightDistance) <= 0)
+                return false;
+        }
+        return true;
     }
 
     /**
@@ -65,7 +93,7 @@ public class SimpleRayTracer extends RayTracerBase {
         for (LightSource lightSource : scene.lights) {
             Vector l = lightSource.getL(gp.point);
             double nl = alignZero(n.dotProduct(l));
-            if (nl * nv > 0) {
+            if ((nl * nv > 0) && unshaded(gp, l, n, lightSource)){
                 // sign(nl) == sign(nv);
                 Color iL = lightSource.getIntensity(gp.point);
                 color = color.add(iL.scale(calcDiffusive(material, nl).add(calcSpecular(material, n, l, nl, v))));
