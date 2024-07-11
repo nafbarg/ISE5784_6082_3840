@@ -1,10 +1,25 @@
 package primitives;
 
 public class Material {
+    /**
+     * Diffuse attenuation factor
+     */
     public Double3 kD  = Double3.ZERO;
+    /**
+     * Specular attenuation factor
+     */
     public Double3 kS = Double3.ZERO;
+    /**
+     * Refraction attenuation factor
+     */
     public Double3 kT = Double3.ZERO;
+    /**
+     * Reflection attenuation factor
+     */
     public Double3 kR = Double3.ZERO;
+    /**
+     * Shininess factor
+     */
     public int nShininess = 0;
 
 
