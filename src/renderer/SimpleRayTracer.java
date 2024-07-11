@@ -12,6 +12,9 @@ import static primitives.Util.alignZero;
  */
 public class SimpleRayTracer extends RayTracerBase {
 
+    private static final int MAX_CALC_COLOR_LEVEL = 10;
+    private static final double MIN_CALC_COLOR_K = 0.001;
+
     /**
      * The delta value used to prevent self-shadowing.
      */
@@ -73,6 +76,33 @@ public class SimpleRayTracer extends RayTracerBase {
      */
     private Color calcColor(GeoPoint intersection, Ray ray) {
         return scene.ambientLight.getIntensity().add(calcLocalEffects(intersection, ray));
+    }
+
+
+    private Color calcColor(GeoPoint intersection, Ray ray,
+                            int level, double k) {
+        Color color = calcLocalEffects(intersection, ray, k);
+        return 1 == level ? Color : color.add(calcGlobalEffects(intersection, ray, level, k));
+    }
+
+    private Color calcGlobalEffect(Ray ray, int level, Double k, Double3 kx) {
+        Double3 kkx = k.product(kx);
+        if (kkx.lowerThan(MIN_CALC_COLOR_K)) return Color.BLACK;
+        GeoPoint gp = ray.findClosestGeoPoint(scene.geometries.findGeoIntersections(ray));
+        return (gp == null ? scene.background : calcColor(gp, ray, level-1, kkx)).scale(kx);
+    }
+
+    private Color calcGlobalEffects(GeoPoint gp, Vector v, int level, Double3 k) {
+        Material material = gp.geometry.getMaterial();
+        return calcGLobalEffect(constructRefractedRay(gp, ray), material.kr, level, k)
+                .add(calcColorGLobalEffect(constructReflectedRay(gp, ray), material.kt, level, k));
+    }
+
+    private Color calcGlobalEffect(Ray ray, int level, Double3 k, Double3 kx) {
+        Double3 kkx = k.product(kx);
+        if (kkx.lowerThan(MIN_CALC_COLOR_K)) return Color.BLACK;
+        GeoPoint gp = findClosestIntersection(ray);
+        return (gp == null ? scene.background : calcColor(gp, ray, level-1, kkx)).scale(kx);
     }
 
     /**
