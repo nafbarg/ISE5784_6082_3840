@@ -14,6 +14,11 @@ public class Ray {
     final Vector direction;
 
     /**
+     * The delta value used to prevent self-shadowing.
+     */
+    private static final double DELTA = 0.1;
+
+    /**
      * Constructs a new ray with the specified head and direction.
      *
      * @param head the starting point of the ray
@@ -23,7 +28,13 @@ public class Ray {
         this.head = head;
         this.direction = direction.normalize();
     }
-    /**
+
+    public Ray(Point head, Vector direction, Vector normal){
+        // Move the starting point slightly in the direction of the reflected ray to avoid self-intersection
+        Vector deltaVector = normal.scale(normal.dotProduct(direction) > 0 ? DELTA : -DELTA);
+        this.head = head.add(deltaVector);
+        this.direction = direction.normalize();
+    }    /**
      * Returns the starting point of the ray.
      *
      * @return starting point of ray.
@@ -31,6 +42,8 @@ public class Ray {
     public Point getP0() {
         return head;
     }
+
+
 
     /**
      * Returns the directional vector of the ray.

@@ -117,4 +117,11 @@ public class Double3 {
     *               triad, false otherwise
     */
    public boolean lowerThan(Double3 other) { return d1 < other.d1 && d2 < other.d2 && d3 < other.d3; }
+
+    /**
+     * Checks whether all the numbers are greater than a test number
+     * @param  other the test number
+     * @return   true if all the numbers are greater than k, false otherwise
+     */
+   public boolean greaterThan(double other) { return d1 > other && d2 > other && d3 > other; }
 }

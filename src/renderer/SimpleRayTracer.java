@@ -40,9 +40,9 @@ public class SimpleRayTracer extends RayTracerBase {
      */
     private boolean unshaded(GeoPoint gp, Vector l, Vector n, LightSource light) {
         Vector lightDirection = l.scale(-1); // from point to light source
-        Vector delta = n.scale(n.dotProduct(lightDirection) > 0 ? DELTA : -DELTA);
-        Point point = gp.point.add(delta);
-        Ray shadowRay = new Ray(point, lightDirection);
+//        Vector delta = n.scale(n.dotProduct(lightDirection) > 0 ? DELTA : -DELTA);
+//        Point point = gp.point.add(delta);
+        Ray shadowRay = new Ray(gp.point, lightDirection, n);
         var intersections = scene.geometries.findGeoIntersections(shadowRay);
         if (intersections == null) return true;
         double lightDistance = light.getDistance(gp.point);
@@ -52,6 +52,29 @@ public class SimpleRayTracer extends RayTracerBase {
         }
         return true;
     }
+
+    /**
+     * Calculates the transparency of a point.
+     *
+     * @param geoPoint the intersection point
+     * @param ls the light source
+     * @param l the light direction vector
+     * @param n the normal vector at the intersection point
+     * @return the transparency of the point as a Double3
+     */
+    private Double3 transparency(GeoPoint geoPoint, LightSource ls, Vector l, Vector n){
+        Vector lightDirection = l.scale(-1); // from point to light source
+        Ray lightRay = new Ray(geoPoint.point, lightDirection, n);
+        var intersections = scene.geometries.findGeoIntersections(lightRay);
+        if (intersections == null) return Double3.ONE;
+        Double3 ktr = Double3.ONE;
+        for (GeoPoint gp : intersections) {
+                ktr = ktr.product(gp.geometry.getMaterial().kT);
+                if (ktr.lowerThan(MIN_CALC_COLOR_K)) return Double3.ZERO;
+        }
+        return ktr;
+    }
+
 
 
     @Override
@@ -90,7 +113,7 @@ public class SimpleRayTracer extends RayTracerBase {
      * @return the calculated color at the intersection point
      */
     private Color calcColor(GeoPoint intersection, Ray ray, int level, Double3 k) {
-        Color color = calcLocalEffects(intersection, ray);
+        Color color = calcLocalEffects(intersection, ray, k);
         return 1 == level ? color : color.add(calcGlobalEffects(intersection, ray, level, k));
     }
 
@@ -104,8 +127,8 @@ public class SimpleRayTracer extends RayTracerBase {
      */
     private Color calcGlobalEffects(GeoPoint gp, Ray ray, int level, Double3 k) {
         Material material = gp.geometry.getMaterial();
-        return calcGlobalEffect(constructRefractedRay(gp, ray), material.kR, level, k)
-                .add(calcGlobalEffect(constructReflectedRay(gp, ray), material.kT, level, k));
+        return calcGlobalEffect(constructRefractedRay(gp, ray), material.kT, level, k)
+                .add(calcGlobalEffect(constructReflectedRay(gp, ray), material.kR, level, k));
     }
 
     /**
@@ -116,7 +139,7 @@ public class SimpleRayTracer extends RayTracerBase {
      * @param kx the attenuation factor for the specific global effect
      * @return the calculated color considering the global effect
      */
-    private Color calcGlobalEffect(Ray ray, Double3 k, int level, Double3 kx) {
+    private Color calcGlobalEffect(Ray ray, Double3 kx, int level,Double3 k) {
         Double3 kkx = k.product(kx);
         if (kkx.lowerThan(MIN_CALC_COLOR_K)) return Color.BLACK;
         GeoPoint gp = findClosestIntersection(ray);
@@ -135,10 +158,10 @@ public class SimpleRayTracer extends RayTracerBase {
         Point point = geoPoint.point;
 
         // Move the starting point slightly in the direction of the ray to avoid self-intersection
-        Vector deltaVector = direction.scale(DELTA);
-        Point movedPoint = point.add(deltaVector);
-
-        return new Ray(movedPoint, direction);
+//        Vector deltaVector = direction.scale(DELTA);
+//        Point movedPoint = point.add(deltaVector);
+        Vector normal = geoPoint.geometry.getNormal(point);
+        return new Ray(point, direction, normal);
     }
 
     /**
@@ -156,10 +179,10 @@ public class SimpleRayTracer extends RayTracerBase {
         Vector reflectedDirection = direction.subtract(normal.scale(2 * direction.dotProduct(normal)));
 
         // Move the starting point slightly in the direction of the reflected ray to avoid self-intersection
-        Vector deltaVector = normal.scale(DELTA);
-        Point movedPoint = point.add(deltaVector);
+//        Vector deltaVector = normal.scale(normal.dotProduct(direction) > 0 ? -DELTA : DELTA);
+//        Point movedPoint = point.add(deltaVector);
 
-        return new Ray(movedPoint, reflectedDirection);
+        return new Ray(point, reflectedDirection, normal);
     }
 
 
@@ -171,7 +194,7 @@ public class SimpleRayTracer extends RayTracerBase {
      * @param ray the ray that intersects the geometry
      * @return the color at the intersection point
      */
-    private Color calcLocalEffects(GeoPoint gp, Ray ray) {
+    private Color calcLocalEffects(GeoPoint gp, Ray ray, Double3 k) {
         Vector n = gp.geometry.getNormal(gp.point);
         Vector v = ray.getDirection();
         double nv = alignZero(n.dotProduct(v));
@@ -182,10 +205,12 @@ public class SimpleRayTracer extends RayTracerBase {
         for (LightSource lightSource : scene.lights) {
             Vector l = lightSource.getL(gp.point);
             double nl = alignZero(n.dotProduct(l));
-            if ((nl * nv > 0) && unshaded(gp, l, n, lightSource)){
-                // sign(nl) == sign(nv);
-                Color iL = lightSource.getIntensity(gp.point);
-                color = color.add(iL.scale(calcDiffusive(material, nl).add(calcSpecular(material, n, l, nl, v))));
+            if ((nl * nv > 0)) {// sign(nl) == sign(nv))
+                Double3 ktr = transparency(gp, lightSource, l, n);
+                if (ktr.product(k).greaterThan(MIN_CALC_COLOR_K)) {
+                    Color iL = lightSource.getIntensity(gp.point).scale(ktr);
+                    color = color.add(iL.scale(calcDiffusive(material, nl).add(calcSpecular(material, n, l, nl, v))));
+                }
             }
         }
         return color;

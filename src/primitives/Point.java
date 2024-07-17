@@ -12,6 +12,7 @@ public class Point {
      */
     final protected Double3 xyz;
 
+
     /**
      * A constant representing a point at the origin (0,0,0).
      */
@@ -102,4 +103,5 @@ public class Point {
     public Vector subtract(Point point) {
         return new Vector(xyz.subtract(point.xyz));
     }
+
 }
