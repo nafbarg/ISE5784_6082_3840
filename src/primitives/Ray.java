@@ -29,12 +29,21 @@ public class Ray {
         this.direction = direction.normalize();
     }
 
+    /**
+     * Constructs a new ray with the specified head, direction, and normal.
+     *
+     * @param head the starting point of the ray
+     * @param direction the direction of the ray
+     * @param normal the normal of the surface the ray is reflecting off of
+     */
     public Ray(Point head, Vector direction, Vector normal){
         // Move the starting point slightly in the direction of the reflected ray to avoid self-intersection
         Vector deltaVector = normal.scale(normal.dotProduct(direction) > 0 ? DELTA : -DELTA);
         this.head = head.add(deltaVector);
         this.direction = direction.normalize();
-    }    /**
+    }
+
+    /**
      * Returns the starting point of the ray.
      *
      * @return starting point of ray.
@@ -109,6 +118,12 @@ public class Ray {
         return closestGeoPoint;
     }
 
+    /**
+     * find the closest point to head from a list of points
+     *
+     * @param intersections list of points
+     * @return closest point
+     */
     public Point findClosestPoint(List<Point> intersections) {
         if (intersections == null) {
             return null;

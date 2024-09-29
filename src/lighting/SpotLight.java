@@ -4,7 +4,8 @@ import primitives.*;
 import static primitives.Util.*;
 
 /**
- * class for spotlight
+ * class SpotLight is a class that represents the spotlight in the scene
+ * it has a direction and a position and extends PointLight.
  */
 public class SpotLight extends PointLight {
     private final Vector direction;
@@ -59,6 +60,7 @@ public class SpotLight extends PointLight {
     @Override
     public Color getIntensity(Point p) {
         double projection = alignZero(direction.dotProduct(getL(p)));
+        // if the point is outside the cone of light
         return (projection <= 0) ? Color.BLACK : super.getIntensity(p).scale(projection);
     }
 }

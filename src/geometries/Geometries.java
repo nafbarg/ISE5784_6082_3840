@@ -1,6 +1,4 @@
 package geometries;
-
-import primitives.Point;
 import primitives.Ray;
 
 import java.util.Arrays;
@@ -9,7 +7,6 @@ import java.util.List;
 
 /**
  * The Geometries class represents a collection of geometric objects.
- * It implements the Intersectable interface and allows for adding multiple geometric objects.
  */
 public class Geometries extends Intersectable {
     final private List<Intersectable> geometries = new LinkedList<>();

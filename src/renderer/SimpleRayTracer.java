@@ -17,11 +17,6 @@ public class SimpleRayTracer extends RayTracerBase {
     private static final Double3 INITIAL_K = Double3.ONE;
 
     /**
-     * The delta value used to prevent self-shadowing.
-     */
-    private static final double DELTA = 0.1;
-
-    /**
      * Constructs a SimpleRayTracer with the given scene.
      *
      * @param scene the scene to be rendered by this ray tracer
@@ -29,52 +24,6 @@ public class SimpleRayTracer extends RayTracerBase {
     public SimpleRayTracer(scene.Scene scene) {
         super(scene);
     }
-
-    /**
-     * Checks if the point is shaded by another geometry.
-     *
-     * @param gp the intersection point
-     * @param l the light direction vector
-     * @param n the normal vector at the intersection point
-     * @return true if the point is not shaded by another geometry, false otherwise
-     */
-    private boolean unshaded(GeoPoint gp, Vector l, Vector n, LightSource light) {
-        Vector lightDirection = l.scale(-1); // from point to light source
-//        Vector delta = n.scale(n.dotProduct(lightDirection) > 0 ? DELTA : -DELTA);
-//        Point point = gp.point.add(delta);
-        Ray shadowRay = new Ray(gp.point, lightDirection, n);
-        var intersections = scene.geometries.findGeoIntersections(shadowRay);
-        if (intersections == null) return true;
-        double lightDistance = light.getDistance(gp.point);
-        for (GeoPoint geoPoint : intersections) {
-            if (alignZero(geoPoint.point.distance(gp.point) - lightDistance) <= 0 && (geoPoint.geometry.getMaterial().kT.equals(Double3.ZERO)))
-                return false;
-        }
-        return true;
-    }
-
-    /**
-     * Calculates the transparency of a point.
-     *
-     * @param geoPoint the intersection point
-     * @param ls the light source
-     * @param l the light direction vector
-     * @param n the normal vector at the intersection point
-     * @return the transparency of the point as a Double3
-     */
-    private Double3 transparency(GeoPoint geoPoint, LightSource ls, Vector l, Vector n){
-        Vector lightDirection = l.scale(-1); // from point to light source
-        Ray lightRay = new Ray(geoPoint.point, lightDirection, n);
-        var intersections = scene.geometries.findGeoIntersections(lightRay);
-        if (intersections == null) return Double3.ONE;
-        Double3 ktr = Double3.ONE;
-        for (GeoPoint gp : intersections) {
-                ktr = ktr.product(gp.geometry.getMaterial().kT);
-                if (ktr.lowerThan(MIN_CALC_COLOR_K)) return Double3.ZERO;
-        }
-        return ktr;
-    }
-
 
 
     @Override
@@ -154,12 +103,8 @@ public class SimpleRayTracer extends RayTracerBase {
      * @return the refracted ray
      */
     private Ray constructRefractedRay(GeoPoint geoPoint, Ray ray) {
-        Vector direction = ray.getDirection();
         Point point = geoPoint.point;
-
-        // Move the starting point slightly in the direction of the ray to avoid self-intersection
-//        Vector deltaVector = direction.scale(DELTA);
-//        Point movedPoint = point.add(deltaVector);
+        Vector direction = ray.getDirection();
         Vector normal = geoPoint.geometry.getNormal(point);
         return new Ray(point, direction, normal);
     }
@@ -174,14 +119,8 @@ public class SimpleRayTracer extends RayTracerBase {
         Point point = geoPoint.point;
         Vector direction = ray.getDirection();
         Vector normal = geoPoint.geometry.getNormal(point);
-
         // Calculate the reflected direction
         Vector reflectedDirection = direction.subtract(normal.scale(2 * direction.dotProduct(normal)));
-
-        // Move the starting point slightly in the direction of the reflected ray to avoid self-intersection
-//        Vector deltaVector = normal.scale(normal.dotProduct(direction) > 0 ? -DELTA : DELTA);
-//        Point movedPoint = point.add(deltaVector);
-
         return new Ray(point, reflectedDirection, normal);
     }
 
@@ -217,6 +156,31 @@ public class SimpleRayTracer extends RayTracerBase {
     }
 
     /**
+     * Calculates the transparency of a point.
+     *
+     * @param geoPoint the intersection point
+     * @param ls the light source
+     * @param l the light direction vector
+     * @param n the normal vector at the intersection point
+     * @return the transparency of the point as a Double3
+     */
+    private Double3 transparency(GeoPoint geoPoint, LightSource ls, Vector l, Vector n){
+        Vector lightDirection = l.scale(-1); // from point to light source
+        Ray lightRay = new Ray(geoPoint.point, lightDirection, n);
+        var intersections = scene.geometries.findGeoIntersections(lightRay);
+        if (intersections == null) return Double3.ONE;
+        Double3 ktr = Double3.ONE;
+        for (GeoPoint gp : intersections) {
+            if (alignZero(gp.point.distance(geoPoint.point) - ls.getDistance(geoPoint.point)) <= 0) {
+                ktr = ktr.product(gp.geometry.getMaterial().kT);
+                if (ktr.lowerThan(MIN_CALC_COLOR_K))
+                    return Double3.ZERO;
+            }
+        }
+        return ktr;
+    }
+
+    /**
      * Calculates the diffusive component of the lighting model.
      *
      * @param material the material of the intersected geometry
@@ -244,3 +208,4 @@ public class SimpleRayTracer extends RayTracerBase {
         return material.kS.scale(Math.pow(max, material.nShininess));
     }
 }
+

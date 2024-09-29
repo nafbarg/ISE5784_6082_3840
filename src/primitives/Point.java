@@ -38,8 +38,23 @@ public class Point {
         this.xyz = xyz;
     }
 
+    /**
+     * Returns the x-coordinate of the point.
+     *
+     * @return the x-coordinate
+     */
     public double getX(){ return xyz.d1;}
+    /**
+     * Returns the y-coordinate of the point.
+     *
+     * @return the y-coordinate
+     */
     public double getY(){ return xyz.d2;}
+    /**
+     * Returns the z-coordinate of the point.
+     *
+     * @return the z-coordinate
+     */
     public double getZ(){ return xyz.d3;}
 
     @Override

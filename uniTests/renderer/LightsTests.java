@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import geometries.*;
 import lighting.*;
 import primitives.*;
-import renderer.*;
 import scene.Scene;
 
 /**
@@ -15,19 +14,19 @@ import scene.Scene;
  * @author Dan
  */
 public class LightsTests {
-   /** First scene for some of tests */
+   /** First scene for some of the tests */
    private final Scene          scene1                  = new Scene("Test scene");
-   /** Second scene for some of tests */
+   /** Second scene for some of the tests */
    private final Scene          scene2                  = new Scene("Test scene")
            .setAmbientLight(new AmbientLight(new Color(WHITE), new Double3(0.15)));
 
-   /** First camera builder for some of tests */
+   /** First camera builder for some of the tests */
    private final Camera.Builder camera1                 = Camera.getBuilder()
            .setRayTracer(new SimpleRayTracer(scene1))
            .setLocation(new Point(0, 0, 1000))
            .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0)) /*change from Point.ZERO to new Vector(0, 0, -1)*/
            .setVpSize(150, 150).setVpDistance(1000);
-   /** Second camera builder for some of tests */
+   /** Second camera builder for some of the tests */
    private final Camera.Builder camera2                 = Camera.getBuilder()
            .setRayTracer(new SimpleRayTracer(scene2))
            .setLocation(new Point(0, 0, 1000))

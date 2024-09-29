@@ -73,7 +73,6 @@ public class Plane extends Geometry {
     }
 
     @Override
-
     protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
         Point p0 = ray.getP0();
         Vector v = ray.getDirection();

@@ -83,6 +83,37 @@ public class Camera implements Cloneable{
         imagerWriter.writePixel(j, i, color);
     }
 
+    /**
+     * Constructs a ray from the camera through a pixel.
+     *
+     * @param nX the number of pixels in the x direction
+     * @param nY the number of pixels in the y direction
+     * @param j the x coordinate of the pixel
+     * @param i the y coordinate of the pixel
+     * @return the constructed ray
+     */
+    public Ray constructRay(int nX, int nY, int j, int i) {
+        // pixel measurements
+        double rY = height / nY;
+        double rX = width / nX;
+
+        // place pixel[i,j] in view grid center
+        Point pIJ = p0.add(vTo.scale(distance));
+
+        // calculate pixel[i,j] center
+        double yI = -(i - ((nY - 1) / 2d)) * rY;
+        double xJ = (j - ((nX - 1) / 2d)) * rX;
+
+        // shift to center of pixel[i,j]
+        if (!isZero(xJ))
+            pIJ = pIJ.add(vRight.scale(xJ));
+        if (!isZero(yI))
+            pIJ = pIJ.add(vUp.scale(yI));
+
+        // return ray from camera to viewPlane coordinate (i, j)
+        return new Ray(p0, pIJ.subtract(p0));
+    }
+
     public static class Builder{
         final private Camera camera = new Camera();
 
@@ -211,10 +242,6 @@ public class Camera implements Cloneable{
 
         }
 
-
-        public Builder setDirection(Point zero, Vector y) {
-            return this;
-        }
     }
 
 
@@ -225,37 +252,6 @@ public class Camera implements Cloneable{
      */
     public static Builder getBuilder() {
         return new Builder();
-    }
-
-    /**
-     * Constructs a ray from the camera through a pixel.
-     *
-     * @param nX the number of pixels in the x direction
-     * @param nY the number of pixels in the y direction
-     * @param j the x coordinate of the pixel
-     * @param i the y coordinate of the pixel
-     * @return the constructed ray
-     */
-    public Ray constructRay(int nX, int nY, int j, int i) {
-        // pixel measurements
-        double rY = height / nY;
-        double rX = width / nX;
-
-        // place pixel[i,j] in view grid center
-        Point pIJ = p0.add(vTo.scale(distance));
-
-        // calculate pixel[i,j] center
-        double yI = -(i - ((nY - 1) / 2d)) * rY;
-        double xJ = (j - ((nX - 1) / 2d)) * rX;
-
-        // shift to center of pixel[i,j]
-        if (!isZero(xJ))
-            pIJ = pIJ.add(vRight.scale(xJ));
-        if (!isZero(yI))
-            pIJ = pIJ.add(vUp.scale(yI));
-
-        // return ray from camera to viewPlane coordinate (i, j)
-        return new Ray(p0, pIJ.subtract(p0));
     }
 
 

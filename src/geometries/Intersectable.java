@@ -1,13 +1,12 @@
 package geometries;
 
-import primitives.Double3;
 import primitives.Point;
 import primitives.Ray;
 
 import java.util.List;
 
 /**
- * The Intersectable interface represents an object that can be intersected by a ray.
+ * Intersectable is an abstract class that represents an object that can be intersected by a ray.
  */
 public abstract class Intersectable {
 

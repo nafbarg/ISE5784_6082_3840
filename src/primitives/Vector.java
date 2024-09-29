@@ -21,7 +21,9 @@ public class Vector extends Point{
      * @throws IllegalArgumentException if the vector is (0,0,0)
      */
     public Vector(double x, double y, double z) {
-        this(new Double3(x, y, z));
+        super(x, y, z);
+        if (xyz.equals(Double3.ZERO))
+            throw new IllegalArgumentException("Vector(0,0,0) is not a valid vector");
     }
 
     /**
@@ -64,6 +66,7 @@ public class Vector extends Point{
      *
      * @param scalar the scalar to scale by
      * @return the new vector
+     * @throws IllegalArgumentException if the scalar is 0
      */
     public Vector scale(double scalar) {
         if (isZero(scalar))
@@ -118,6 +121,7 @@ public class Vector extends Point{
      *
      * @param vector the other vector
      * @return the cross product
+     * @throws IllegalArgumentException if the vectors are parallel
      */
     public Vector crossProduct(Vector vector) {
         //check if the vectors are parallel

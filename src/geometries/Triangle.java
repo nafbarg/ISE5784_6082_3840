@@ -57,4 +57,16 @@ public class Triangle extends Polygon {
         // If the intersection point is not inside the triangle
         return null;
     }
+
+    public Point getP1() {
+        return vertices.getFirst();
+    }
+
+    public Point getP2() {
+        return vertices.get(1);
+    }
+
+    public Point getP3() {
+        return vertices.get(2);
+    }
 }

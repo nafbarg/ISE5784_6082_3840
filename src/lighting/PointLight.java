@@ -4,6 +4,10 @@ import primitives.Color;
 import primitives.Point;
 import primitives.Vector;
 
+/**
+ * class PointLight is a class that represents the point light in the scene
+ * it has a position
+ */
 public class PointLight extends Light implements LightSource{
     private final Point position;
     private double kC = 1;

@@ -1,7 +1,5 @@
 package geometries;
 
-import primitives.Ray;
-import primitives.Vector;
 
 /**
  * RadialGeometry is an abstract class that represents a radial geometry in 3D space.

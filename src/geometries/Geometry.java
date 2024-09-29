@@ -2,11 +2,10 @@ package geometries;
 
 import primitives.*;
 
-import java.util.List;
 
 
 /**
- * Geometry is an interface that represents a geometric object in 3D space.
+ * Geometry is an abstract class that represents a geometric object in 3D space.
  */
 public abstract class Geometry extends Intersectable {
     /**
