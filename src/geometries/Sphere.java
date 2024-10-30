@@ -69,4 +69,11 @@ public class Sphere extends RadialGeometry {
 
     }
 
+    public Point getCenter() {
+        return center;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
 }

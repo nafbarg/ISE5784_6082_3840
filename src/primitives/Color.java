@@ -113,4 +113,15 @@ public class Color {
 
    @Override
    public String toString() { return "rgb:" + rgb; }
+
+   /**
+    * Check if the color is equal to another color
+    * @param  baseColor the color to compare with
+    * @return       true if the colors are equal, false otherwise
+    */
+   public boolean isSimilar(Color baseColor, double threshold) {
+      return Math.abs(rgb.d1 - baseColor.rgb.d1) < threshold &&
+              Math.abs(rgb.d2 - baseColor.rgb.d2) < threshold &&
+              Math.abs(rgb.d3 - baseColor.rgb.d3) < threshold;
+   }
 }
