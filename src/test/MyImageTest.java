@@ -24,23 +24,26 @@ import java.util.Random;
  */
 public class MyImageTest {
 
-    /** The scene where all geometries and lighting are placed */
+    /**
+     * The scene where all geometries and lighting are placed
+     */
     private final Scene scene = new Scene("Test scene");
 
 
-    private final Camera.Builder camera     = Camera.getBuilder()
-            .setDirection(new Vector(0,0,-1), Vector.Y)
+    private final Camera.Builder camera = Camera.getBuilder()
+            .setDirection(new Vector(0, 0, -1), Vector.Y)
             .setLocation(new Point(0, 0, 1000)).setVpDistance(700)
             .setVpSize(200, 200)
             .setRayTracer(new SimpleRayTracer(scene))
             .setNumSamples(1);
 
 
-
-    /** Camera builder of the tests */
-    private final Camera.Builder camera1     = Camera.getBuilder()
+    /**
+     * Camera builder of the tests
+     */
+    private final Camera.Builder camera1 = Camera.getBuilder()
             .setDirection(new Vector(0, 1, 0), new Vector(0, 0, 1))
-            .setNumSamples(80)
+            .setNumSamples(1)
             .setLocation(new Point(-40, -200, -20)).setVpDistance(100)
             .setVpSize(200, 200)
             .setThreadsCount(3)
@@ -91,14 +94,14 @@ public class MyImageTest {
 
 
         // Add a pyramid
-        Point apex = new Point(35.0,-51.6,-11.1);
+        Point apex = new Point(35.0, -51.6, -11.1);
         Point p1 = new Point(-60, -106.6, -93.6);
-        Point p2 = new Point(90.0,-106.7,-103.6);
-        Point p3 = new Point(52.5,5.8,-111.1);
+        Point p2 = new Point(90.0, -106.7, -103.6);
+        Point p3 = new Point(52.5, 5.8, -111.1);
 
         Triangle pyramidSide1 = (Triangle) new Triangle(p1, p2, apex)
                 .setMaterial(new Material().setKd(0.1).setKs(0.4).setShininess(30).setKr(0.15));
-        Triangle pyramidSide2 = (Triangle) new Triangle(p2, p3 , apex)
+        Triangle pyramidSide2 = (Triangle) new Triangle(p2, p3, apex)
                 .setMaterial(new Material().setKd(0.2).setKs(0.7).setShininess(30).setKr(0.7));
         Triangle pyramidSide3 = (Triangle) new Triangle(p1, p3, apex)
                 .setMaterial(new Material().setKd(0.0).setKs(0.0).setShininess(30).setKr(1)).setEmission(new Color(20, 30, 40));
@@ -113,16 +116,15 @@ public class MyImageTest {
         scene.geometries.add(tube);
 
 
-
         // Add a cube
-        p1 = new Point(-67.67766952966369,-5.177669529663689,-44.82233047033631);
-        p2 = new Point(-32.32233047033632,19.822330470336308,-69.82233047033631);
-        p3 = new Point(-57.32233047033631,62.5,-62.5);
-        Point p4 = new Point(-92.67766952966369,37.5,-37.5);
-        Point p5 = new Point(-92.67766952966369,-12.5,-87.5);
-        Point p6 = new Point(-57.32233047033631,12.499999999999996,-112.5);
-        Point p7 = new Point(-82.32233047033631,55.17766952966369,-105.17766952966369);
-        Point p8 = new Point(-117.67766952966369,30.177669529663692,-80.17766952966369);
+        p1 = new Point(-67.67766952966369, -5.177669529663689, -44.82233047033631);
+        p2 = new Point(-32.32233047033632, 19.822330470336308, -69.82233047033631);
+        p3 = new Point(-57.32233047033631, 62.5, -62.5);
+        Point p4 = new Point(-92.67766952966369, 37.5, -37.5);
+        Point p5 = new Point(-92.67766952966369, -12.5, -87.5);
+        Point p6 = new Point(-57.32233047033631, 12.499999999999996, -112.5);
+        Point p7 = new Point(-82.32233047033631, 55.17766952966369, -105.17766952966369);
+        Point p8 = new Point(-117.67766952966369, 30.177669529663692, -80.17766952966369);
 
         Polygon front = new Polygon(p1, p2, p3, p4);
         Polygon back = new Polygon(p5, p6, p7, p8);
@@ -191,8 +193,8 @@ public class MyImageTest {
                 new Polygon(new Point(-200, -200, -100), new Point(-200, -200, 400), new Point(-200, 200, 400), new Point(-200, 200, -100))
                         .setEmission(new Color(40, 41, 42))
                         .setMaterial(new Material().setKd(0.0).setKs(0.2).setShininess(30).setKr(0.0)),
-         //add bubbles
-        new Sphere(2.6, new Point(10.9, -30.2, -45.8)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.13).setKt(0.85)),
+                //add bubbles
+                new Sphere(2.6, new Point(10.9, -30.2, -45.8)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.13).setKt(0.85)),
                 new Sphere(3.6, new Point(-54.4, -51.1, -18.7)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.14).setKt(0.89)),
                 new Sphere(5.0, new Point(-55.1, -70.6, 11.2)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.07).setKt(0.87)),
                 new Sphere(4.1, new Point(-1.3, -17.7, -3.3)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.10).setKt(0.84)),
@@ -221,24 +223,73 @@ public class MyImageTest {
                 new Sphere(2.2, new Point(-62.0, -84.6, -32.4)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.10).setKt(0.95)),
                 new Sphere(2.1, new Point(-31.9, -52.4, -77.7)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.11).setKt(0.84)),
                 new Sphere(4.7, new Point(19.6, 29.0, -44.4)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.14).setKt(0.84)),
-                new Sphere(3.9, new Point(-50.3, -17.9, -39.9)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.13).setKt(0.82)))
+                new Sphere(3.9, new Point(-50.3, -17.9, -39.9)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.13).setKt(0.82)),
+                new Sphere(2.2, new Point(-93.0, -48.7, -37.8)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.15).setKt(0.82)),
+                new Sphere(2.9, new Point(-34.6, -85.2, 4.7)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.13).setKt(0.99)),
+                new Sphere(4.1, new Point(30.5, -48.7, -28.6)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.06).setKt(0.89)),
+                new Sphere(3.1, new Point(-5.9, -94.4, 0.7)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.05).setKt(0.88)),
+                new Sphere(3.8, new Point(17.0, -34.8, 0.2)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.07).setKt(0.97)),
+                new Sphere(4.8, new Point(-38.7, -42.4, -35.7)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.10).setKt(0.84)),
+                new Sphere(3.7, new Point(-43.4, -20.6, 54.4)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.12).setKt(0.82)),
+                new Sphere(2.9, new Point(-33.7, -44.1, 32.4)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.15).setKt(0.90)),
+                new Sphere(2.8, new Point(-21.2, 8.3, -35.3)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.07).setKt(0.96)),
+                new Sphere(2.9, new Point(-83.6, -59.3, 22.3)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.07).setKt(0.96)),
+                new Sphere(2.5, new Point(-20.2, -35.4, -69.3)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.13).setKt(0.87)),
+                new Sphere(3.9, new Point(31.4, -1.6, -31.0)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.14).setKt(0.90)),
+                new Sphere(4.5, new Point(-26.2, 43.8, -49.7)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.12).setKt(0.87)),
+                new Sphere(3.3, new Point(-80.4, 26.9, -26.5)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.08).setKt(0.91)),
+                new Sphere(3.4, new Point(-29.7, -6.8, -42.8)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.12).setKt(0.83)),
+                new Sphere(4.4, new Point(46.8, 4.5, 13.5)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.15).setKt(0.85)),
+                new Sphere(4.4, new Point(35.7, -71.1, 17.1)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.08).setKt(0.89)),
+                new Sphere(4.9, new Point(-34.0, -90.9, 31.9)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.09).setKt(0.91)),
+                new Sphere(3.0, new Point(-15.9, -59.1, 38.6)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.12).setKt(0.84)),
+                new Sphere(4.1, new Point(-31.2, -85.9, -34.8)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.09).setKt(0.86)),
+                new Sphere(4.9, new Point(-43.1, -60.0, 42.3)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.07).setKt(0.82)),
+                new Sphere(3.9, new Point(-19.5, -60.7, 33.1)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.06).setKt(1.00)),
+                new Sphere(2.6, new Point(-16.3, -71.3, -23.8)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.10).setKt(0.85)),
+                new Sphere(3.0, new Point(-21.1, -13.8, -101.7)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.11).setKt(0.97)),
+                new Sphere(3.1, new Point(39.2, -63.8, -10.5)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.10).setKt(0.89)),
+                new Sphere(2.7, new Point(-17.6, -59.2, 55.5)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.08).setKt(0.95)),
+                new Sphere(3.9, new Point(-91.0, 4.2, 8.2)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.12).setKt(0.93)),
+                new Sphere(3.2, new Point(-96.4, -7.2, 4.7)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.14).setKt(0.98)),
+                new Sphere(3.0, new Point(-2.0, -43.3, -59.6)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.08).setKt(0.82)),
+                new Sphere(2.1, new Point(-53.7, -89.0, 25.1)).setEmission(new Color(0, 0, 0)).setMaterial(new Material().setKd(0.1).setKs(0.3).setShininess(50).setKr(0.11).setKt(0.96)))
 
 
         ;
 
 
-
-
-        createFish(new Point(-50, 0, -70), scene, 15.0, new Color(0, 0, 255), 20);
+        //createFish(new Point(-50, 0, -70), scene, 15.0, new Color(0, 0, 255), 20);
+        createFish(new Point(-50, -70, -70), scene, 15.0, new Color(0, 0, 255), 20);
         createFish(new Point(0, 30, -80), scene, 10.0, new Color(200, 0, 255));
-        createFish(new Point(0, 30, -40), scene, 10.0, new Color(0,110,51), 30);
+        createFish(new Point(0, 30, -40), scene, 10.0, new Color(0, 110, 51), 30);
         createFish(new Point(-70, 30, -30), scene, 15.0, new Color(YELLOW), 15);
         createFish(new Point(-90, -30, -70), scene, 8.0, new Color(255, 100, 0), 15);
+
+        createFish(new Point(50, -50, -80), scene, 10.0, new Color(0, 204, 204));
+
         createFish(new Point(40, -70, 0), scene, 8.0, new Color(255, 0, 0), 15);
         createFish(new Point(40, 70, 0), scene, 8.0, new Color(0, 255, 0), 15);
-        createFish(new Point(-80, -70, 0), scene, 8.0, new Color(150,70,100), 45);
+        createFish(new Point(-80, -70, 0), scene, 8.0, new Color(150, 70, 100), 45);
 
-        //createBubbles(new Point(-25, -25, -20), 75, 30, 2, 5, scene);
+        //createBubbles(new Point(-25, -25, -20), 85, 30, 2, 5, scene);
+        Point starfishCenter = new Point(-100, -70, -95);
+        List<Sphere> starfish = createStarfish(starfishCenter, 20, 5, 3, new Color(51, 0, 102));        //add all the starfish to the scene
+        for (Sphere s : starfish) {
+            scene.geometries.add(s);
+        }
+
+        starfishCenter = new Point(70, 25, -92);
+        starfish = createStarfish(starfishCenter, 20, 5, 3, new Color(102, 51, 0));
+        for (Sphere s : starfish) {
+            scene.geometries.add(s);
+        }
+
+        starfishCenter = new Point(0, -50, -100);
+        starfish = createStarfish(starfishCenter, 20, 3, 3, new Color(204, 0, 0));
+        for (Sphere s : starfish) {
+            scene.geometries.add(s);
+        }
 
 
         // Add a cube
@@ -260,11 +311,11 @@ public class MyImageTest {
 
 
         Material cubeMaterial = new Material().setKd(0.1).setKs(0.1).setShininess(60).setKt(0.7);
-        Material cubeMaterialReflective =new  Material().setKd(0.1).setKs(0.1).setShininess(60).setKr(0.25);
-        Color cubeColor = new Color(0,58,80);
+        Material cubeMaterialReflective = new Material().setKd(0.1).setKs(0.1).setShininess(60).setKr(0.25);
+        Color cubeColor = new Color(0, 58, 80);
 
         front.setMaterial(cubeMaterial).setEmission(cubeColor);
-        back.setMaterial(cubeMaterial).setEmission(cubeColor);
+        back.setMaterial(cubeMaterialReflective).setEmission(cubeColor);
         top.setMaterial(cubeMaterial).setEmission(cubeColor);
         bottom.setMaterial(cubeMaterial).setEmission(cubeColor);
         left.setMaterial(cubeMaterialReflective).setEmission(cubeColor);
@@ -298,19 +349,35 @@ public class MyImageTest {
     }
 
 
+    public static List<Sphere> createStarfish(Point center, double armLength, double centerRadius, double armRadius, Color color) {
+        List<Sphere> starfishSpheres = new ArrayList<>();
+
+        // build the center sphere
+        starfishSpheres.add((Sphere) new Sphere(centerRadius, center)
+                .setEmission(color)
+                .setMaterial(new Material().setKd(0.8).setKs(0.2).setShininess(30)));
+
+        // build the arms
+        int numSegments = 8;
+        for (int i = 0; i < 5; i++) {
+            double angle = 2 * Math.PI * i / 5;
+            Vector direction = new Vector(Math.cos(angle), Math.sin(angle), 0).normalize();
+
+            // add the spheres for the arm
+            for (int j = 1; j <= numSegments; j++) {
+                double segmentDistance = armLength * j / numSegments;
+                Point segmentCenter = center.add(direction.scale(segmentDistance));
+                starfishSpheres.add((Sphere) new Sphere(armRadius, segmentCenter)
+                        .setEmission(color)
+                        .setMaterial(new Material().setKd(0.8).setKs(0.2).setShininess(30)));
+            }
+        }
+
+        return starfishSpheres;
+    }
 
 
-
-
-
-
-
-
-
-
-
-
-    public static void createFish(Point center, Scene scene,double bodyRadius,Color color) {
+    public static void createFish(Point center, Scene scene, double bodyRadius, Color color) {
         // Create the body (a Sphere)
         Sphere body = (Sphere) new Sphere(bodyRadius, center)
                 .setEmission(color)
@@ -426,7 +493,15 @@ public class MyImageTest {
     }
 
 
-/*
+
+
+
+
+
+
+
+ /*
+
     public static void createBubbles(Point center, double radius, int numBubbles, double minRadius, double maxRadius, Scene scene) {
         List<Sphere> bubbles = new ArrayList<>();
         Random random = new Random();
@@ -476,6 +551,8 @@ public class MyImageTest {
 
         return center.add(new Vector(x, y, z));
     }
+
+
 
     public static void printBubbles(List<Sphere> bubbles, Random random) {
         for (Sphere bubble : bubbles) {
