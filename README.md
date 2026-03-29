@@ -25,21 +25,21 @@ Strictly adheres to SOLID principles, separating geometric calculations, scene m
 
 ## Performance Optimization Analysis
 
-To validate the engine's efficiency, we conducted benchmarks on a high-complexity scene (80 rays per pixel beam). The results demonstrate a **~80% reduction in rendering time** when combining Multi-threading with Adaptive algorithms.
+To validate the engine's efficiency, we conducted benchmarks on a high-complexity scene (80 rays per pixel beam). The results demonstrate a **~84% reduction in rendering time** when combining Multi-threading with Adaptive algorithms.
 
 | Configuration | Rendering Time | Improvement |
 |:---|:---|:---|
-| **Naive Implementation** (Single Thread, No Optimization) | 22m 38s | Baseline |
-| **Multi-Threading Only** (3 Threads) | 10m 33s | ~53% Faster |
-| **Adaptive Super-Sampling Only** | 10m 36s | ~53% Faster |
-| **Combined Optimization** (Adaptive + Multi-Threading) | **04m 42s** | **~79% Faster** |
+| **Naive Implementation** (Single Thread, No Optimization) | 21m 38s | Baseline |
+| **Multi-Threading Only** (3 Threads) | 10m 58s | ~49% Faster |
+| **Adaptive Super-Sampling Only** | 08m 26s | ~61% Faster |
+| **Combined Optimization** (Adaptive + Multi-Threading) | **03m 23s** | **~84% Faster** |
 
 ## Architecture Highlights
 
 This project was built with a focus on maintainability and algorithmic efficiency:
 
 * **Concurrency Model:** <br>
-The engine uses a `PixelManager` to divide the screen into tasks. Threads request the next available pixel index in a thread-safe manner, ensuring 100% CPU utilization without overlapping work.
+The engine uses a `PixelManager` monitor to divide the screen into parallel tasks. Threads request the next available pixel index in a thread-safe manner, ensuring 100% CPU utilization without overlapping work. To completely eliminate JVM synchronization bottlenecks and lock contention during parallel rendering, **`ThreadLocalRandom`** is utilized for procedural generation and ray jittering.
 
 * **Adaptive Recursive Algorithm:** <br>
     Instead of casting fixed rays per pixel, the engine operates recursively: <br>
@@ -142,7 +142,7 @@ This project adheres to professional software engineering practices:
 - Procedural scene generation with parametric functions
 - Adaptive Super-Sampling anti-aliasing with recursive threshold checking
 - Multi-threaded rendering with PixelManager synchronization
-- Final optimization achieving 79% performance improvement
+- Final optimization achieving 84% performance improvement
 
 ## Professional Development Practices
 
@@ -155,10 +155,10 @@ This project adheres to professional software engineering practices:
 ## Project Statistics
 
 - **Language:** Java 100% <br>
-- **Total Commits:** 42 <br>
+- **Total Commits:** 44 <br>
 - **Contributors:** 2 <br>
 - **Lines of Code:** ~3,500+ LOC <br>
-- **Performance Gain:** 79% rendering time reduction (Multi-threading + Adaptive ASSAA) <br>
+- **Performance Gain:** 84% rendering time reduction (Multi-threading + Adaptive ASSAA) <br>
 - **Test Coverage:** Comprehensive unit test suite with geometric and algorithmic tests <br>
 
 ## Release History
@@ -198,6 +198,6 @@ This project is created for educational and portfolio purposes. Feel free to use
 
 ---
 
-**Last Updated:** January 19, 2026  <br>
+**Last Updated:** March 29, 2026  <br>
 **Status:** Active Development & Maintenance  <br>
 **Performance Target:** Real-time rendering on consumer hardware
