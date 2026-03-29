@@ -3,10 +3,10 @@ package renderer;
 import primitives.*;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.stream.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static primitives.Util.isZero;
 
@@ -28,8 +28,17 @@ public class Camera implements Cloneable{
     private int threadsCount = 0;
     private PixelManager pixelManager;
     private boolean adaptiveSamplingEnabled = false;
+    // Precomputed center point of the view plane (p0 + vTo * distance). Compute once in build().
+    private Point pC;
+    // Threshold for color similarity; default value kept to previous behavior (0.1).
+    private double colorSimilarityThreshold = 0.1;
 
     private Camera() {
+    }
+
+    @Override
+    protected Camera clone() throws CloneNotSupportedException {
+        return (Camera) super.clone();
     }
 
     /**
@@ -120,35 +129,65 @@ public class Camera implements Cloneable{
     }
 
     /**
-     * Performs adaptive supersampling on a pixel to calculate its color.
-     *
-     * @param nX         the number of pixels in the x direction
-     * @param nY         the number of pixels in the y direction
-     * @param j          the x coordinate of the pixel
-     * @param i          the y coordinate of the pixel
-     * @param maxSamples the maximum number of samples
-     * @return the computed color for the pixel
+     * Wrapper function for the adaptive super-sampling.
+     * Calculates the initial 4 corners and calls the recursive helper.
      */
     private Color adaptiveSuperSampling(int nX, int nY, int j, int i, int maxSamples) {
-        // Calculate the four corners of the pixel
         List<Ray> cornerRays = constructCornerRays(nX, nY, j, i);
-        List<Color> colors = cornerRays.stream().map(rayTracer::traceRay).collect(Collectors.toList());
 
-        // Check if colors are similar or if the maximum number of samples has been reached
-        if (areColorsSimilar(colors) || maxSamples <= 4) {
-            return averageColors(colors);
+        // Calculate the initial 4 corners once
+        Color cTopLeft = rayTracer.traceRay(cornerRays.get(0));
+        Color cTopRight = rayTracer.traceRay(cornerRays.get(1));
+        Color cBottomLeft = rayTracer.traceRay(cornerRays.get(2));
+        Color cBottomRight = rayTracer.traceRay(cornerRays.get(3));
+
+        return adaptiveSuperSamplingHelper(nX, nY, j, i, maxSamples, cTopLeft, cTopRight, cBottomLeft, cBottomRight);
+    }
+
+    /**
+     * Recursive helper function that avoids recalculating known corners.
+     */
+    private Color adaptiveSuperSamplingHelper(int nX, int nY, int j, int i, int maxSamples,
+                                              Color cTopLeft, Color cTopRight, Color cBottomLeft, Color cBottomRight) {
+
+        // 1. Calculate the center point color (Solves the "Thin Line" problem)
+        Ray centerRay = constructRay(nX, nY, j, i);
+        Color cCenter = rayTracer.traceRay(centerRay);
+
+        // 2. Check if colors are similar across all 5 points (4 corners + center)
+        if (maxSamples <= 8 || areColorsSimilar(List.of(cTopLeft, cTopRight, cBottomLeft, cBottomRight, cCenter))) {
+            return averageColors(List.of(cTopLeft, cTopRight, cBottomLeft, cBottomRight, cCenter));
         }
 
-        double halfNX = nX * 2;
-        double halfNY = nY * 2;
+        // 3. Clean Code: Calculate next resolution using integers
+        int nextNX = nX * 2;
+        int nextNY = nY * 2;
 
-        Color topLeft = adaptiveSuperSampling((int) halfNX, (int) halfNY, j * 2, i * 2, maxSamples / 4);
-        Color topRight = adaptiveSuperSampling((int) halfNX, (int) halfNY, j * 2 + 1, i * 2, maxSamples / 4);
-        Color bottomLeft = adaptiveSuperSampling((int) halfNX, (int) halfNY, j * 2, i * 2 + 1, maxSamples / 4);
-        Color bottomRight = adaptiveSuperSampling((int) halfNX, (int) halfNY, j * 2 + 1, i * 2 + 1, maxSamples / 4);
+        // 4. Calculate the midpoints of the 4 edges of the current pixel/quadrant
+        // These are required to form the new sub-quadrants without recalculating corners
+        double rY = height / nY;
+        double rX = width / nX;
 
-        // Return the average of the four colors
-        return averageColors(List.of(topLeft, topRight, bottomLeft, bottomRight));
+        Color cTopMiddle    = rayTracer.traceRay(constructRayFromOffset(nX, nY, j, i, 0, -0.5 * rY));
+        Color cBottomMiddle = rayTracer.traceRay(constructRayFromOffset(nX, nY, j, i, 0, 0.5 * rY));
+        Color cLeftMiddle   = rayTracer.traceRay(constructRayFromOffset(nX, nY, j, i, -0.5 * rX, 0));
+        Color cRightMiddle  = rayTracer.traceRay(constructRayFromOffset(nX, nY, j, i, 0.5 * rX, 0));
+
+        // 5. Recursive calls - Passing the known colors down the tree!
+        Color topLeftColor = adaptiveSuperSamplingHelper(nextNX, nextNY, j * 2, i * 2, maxSamples / 4,
+                cTopLeft, cTopMiddle, cLeftMiddle, cCenter);
+
+        Color topRightColor = adaptiveSuperSamplingHelper(nextNX, nextNY, j * 2 + 1, i * 2, maxSamples / 4,
+                cTopMiddle, cTopRight, cCenter, cRightMiddle);
+
+        Color bottomLeftColor = adaptiveSuperSamplingHelper(nextNX, nextNY, j * 2, i * 2 + 1, maxSamples / 4,
+                cLeftMiddle, cCenter, cBottomLeft, cBottomMiddle);
+
+        Color bottomRightColor = adaptiveSuperSamplingHelper(nextNX, nextNY, j * 2 + 1, i * 2 + 1, maxSamples / 4,
+                cCenter, cRightMiddle, cBottomMiddle, cBottomRight);
+
+        // Return the average of the 4 sub-quadrants
+        return averageColors(List.of(topLeftColor, topRightColor, bottomLeftColor, bottomRightColor));
     }
 
     /**
@@ -158,9 +197,23 @@ public class Camera implements Cloneable{
      * @return true if colors are similar, false otherwise
      */
     private boolean areColorsSimilar(List<Color> colors) {
-        Color baseColor = colors.getFirst();
-        final double THRESHOLD = 0.1;  // Define your threshold for color similarity
-        return colors.stream().allMatch(color -> color.isSimilar(baseColor, THRESHOLD));
+        // Defensive checks
+        if (colors == null || colors.isEmpty()) {
+            return true; // nothing to compare, treat as similar
+        }
+
+        // Use class-level threshold (configurable via Builder)
+        final double THRESHOLD = colorSimilarityThreshold;
+        Color baseColor = colors.get(0); // use get(0) which works for any List implementation
+
+        // Use an indexed loop to avoid stream overhead and reduce allocations
+        for (int idx = 1, size = colors.size(); idx < size; idx++) {
+            Color color = colors.get(idx);
+            if (!color.isSimilar(baseColor, THRESHOLD)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -177,11 +230,13 @@ public class Camera implements Cloneable{
         double rY = height / nY;
         double rX = width / nX;
 
+        Point center = calculatePixelCenter(nX, nY, j, i);
+
         // Calculating each corner of the pixel
-        cornerRays.add(constructRayFromOffset(nX, nY, j, i, -0.5 * rX, -0.5 * rY)); // top-left
-        cornerRays.add(constructRayFromOffset(nX, nY, j, i, 0.5 * rX, -0.5 * rY));  // top-right
-        cornerRays.add(constructRayFromOffset(nX, nY, j, i, -0.5 * rX, 0.5 * rY));  // bottom-left
-        cornerRays.add(constructRayFromOffset(nX, nY, j, i, 0.5 * rX, 0.5 * rY));   // bottom-right
+        cornerRays.add(new Ray(p0, center.add(vRight.scale(-0.5 * rX)).add(vUp.scale(-0.5 * rY)).subtract(p0))); // top-left
+        cornerRays.add(new Ray(p0, center.add(vRight.scale(0.5 * rX)).add(vUp.scale(-0.5 * rY)).subtract(p0)));  // top-right
+        cornerRays.add(new Ray(p0, center.add(vRight.scale(-0.5 * rX)).add(vUp.scale(0.5 * rY)).subtract(p0)));  // bottom-left
+        cornerRays.add(new Ray(p0, center.add(vRight.scale(0.5 * rX)).add(vUp.scale(0.5 * rY)).subtract(p0)));   // bottom-right
 
         return cornerRays;
     }
@@ -198,7 +253,16 @@ public class Camera implements Cloneable{
      * @return the constructed ray
      */
     private Ray constructRayFromOffset(int nX, int nY, int j, int i, double offsetX, double offsetY) {
-        Point pIJ = calculatePixelCenter(nX, nY, j, i).add(vRight.scale(offsetX)).add(vUp.scale(offsetY));
+        Point pIJ = calculatePixelCenter(nX, nY, j, i);
+
+        // Add offsets only if they are not zero to avoid scaling a vector by 0
+        if (!isZero(offsetX)) {
+            pIJ = pIJ.add(vRight.scale(offsetX));
+        }
+        if (!isZero(offsetY)) {
+            pIJ = pIJ.add(vUp.scale(offsetY));
+        }
+
         return new Ray(p0, pIJ.subtract(p0));
     }
 
@@ -209,7 +273,11 @@ public class Camera implements Cloneable{
      * @return the average color
      */
     private Color averageColors(List<Color> colors) {
-        return colors.stream().reduce(Color.BLACK, Color::add).scale(1.0 / colors.size());
+        Color sum = Color.BLACK;
+        for (Color color : colors) {
+            sum = sum.add(color);
+        }
+        return sum.scale(1.0 / colors.size());
     }
 
     /**
@@ -223,19 +291,34 @@ public class Camera implements Cloneable{
      * @return the list of rays
      */
     private List<Ray> constructRays(int nX, int nY, int j, int i, int numSamples) {
-        List<Ray> rays = new ArrayList<>();
-        Ray centralRay = constructRay(nX, nY, j, i);
-        rays.add(centralRay); // add the central ray
+        // Pre-allocate list capacity to avoid resizing
+        List<Ray> rays = new ArrayList<>(Math.max(1, numSamples));
+
+        // Compute central/sample base once
+        Point center = calculatePixelCenter(nX, nY, j, i);
+        rays.add(new Ray(p0, center.subtract(p0))); // add the central ray
+
+
+        /*
+        if (numSamples <= 1) {
+            return rays;
+        }*/
 
         double rY = height / nY;
         double rX = width / nX;
 
-        // create numSamples rays for each pixel by adding random offsets
+        ThreadLocalRandom rand = ThreadLocalRandom.current();
+
+        // Generate jittered samples inside the pixel
         for (int s = 1; s < numSamples; s++) {
-            double offsetX = (Math.random() - 0.5) * rX;
-            double offsetY = (Math.random() - 0.5) * rY;
-            Point pIJ = calculatePixelCenter(nX, nY, j, i).add(vRight.scale(offsetX)).add(vUp.scale(offsetY));
-            rays.add(new Ray(p0, pIJ.subtract(p0))); // add the ray
+            double offsetX = (rand.nextDouble() - 0.5) * rX;
+            double offsetY = (rand.nextDouble() - 0.5) * rY;
+
+            Point sampleP = center;
+            if (!isZero(offsetX)) sampleP = sampleP.add(vRight.scale(offsetX));
+            if (!isZero(offsetY)) sampleP = sampleP.add(vUp.scale(offsetY));
+
+            rays.add(new Ray(p0, sampleP.subtract(p0)));
         }
 
         return rays;
@@ -273,7 +356,8 @@ public class Camera implements Cloneable{
         double rX = width / nX;
 
         // place pixel[i,j] in view grid center
-        Point pIJ = p0.add(vTo.scale(distance));
+        // Use precomputed view-plane center (pC) to avoid recomputing p0 + vTo * distance for every pixel
+        Point pIJ = pC;
 
         // calculate pixel[i,j] center
         double yI = -(i - ((nY - 1) / 2d)) * rY;
@@ -411,6 +495,18 @@ public class Camera implements Cloneable{
         }
 
         /**
+         * Sets the color similarity threshold used by adaptive sampling.
+         * A non-negative value is expected (typically between 0 and 1).
+         */
+        public Builder setColorSimilarityThreshold(double threshold) {
+            if (threshold < 0) {
+                throw new IllegalArgumentException("Threshold must be non-negative");
+            }
+            camera.colorSimilarityThreshold = threshold;
+            return this;
+        }
+
+        /**
          * Builds the Camera object.
          *
          * @return the Camera object
@@ -439,6 +535,9 @@ public class Camera implements Cloneable{
 
             // Calculate the missing data
             camera.vRight = camera.vTo.crossProduct(camera.vUp).normalize();
+
+            // Precompute the view-plane center (p0 + vTo * distance) once to avoid repeated work
+            camera.pC = camera.p0.add(camera.vTo.scale(camera.distance));
 
             // Return a clone of the camera
             try {
